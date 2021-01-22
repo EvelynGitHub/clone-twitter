@@ -57,6 +57,7 @@ class User extends Crud
 
         unset($data['id']);
         unset($data['create_at']);
+        unset($data['slug']);
 
         ksort($data);
 
