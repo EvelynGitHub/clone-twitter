@@ -1,0 +1,30 @@
+{
+    "name": "clone/twitter",
+    "description": "Um clone simplificado da rede social Twitter",
+    "minimum-stability": "stable",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Evelyn",
+            "email": "evelynbrandao15@gmail.com",
+            "role": "Develepor"
+        }
+    ],
+    "config": {
+        "vendor-dir": "vendor"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "App\\": "src"
+        },
+        "files": [
+            "env.php"
+        ]
+    },
+    "require": {}
+}
