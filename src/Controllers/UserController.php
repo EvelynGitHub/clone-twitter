@@ -3,86 +3,72 @@
 
 namespace App\Controllers;
 
+use App\Helpers\Helper;
 use App\Models\User;
 
 class UserController
 {
+
+    use Helper;
+
     public function loginUser(array $data)
     {
-        //Verifico se os campos estão preenchidos
-        if (!empty($data["email"]) && !empty($data["password"])) {
+        $inputs = ["email", "password"];
 
-            //Verifica se usuario pode se autenticar
-            $authenticate = (new User)->authenticateUser($data["email"], $data["password"]);
+        //Verifico se os campos de $inputs existem e estão preenchidos
+        if (Helper::isEmpty($inputs, $data)) {
+            // Estão vazios
+            echo Helper::jsonSend("Preencha todos os campos!", "error");
+            return;
+        }
 
-            if ($authenticate) {
-                echo json_encode(array(
-                    "message" => "Vamos te logar agora, um momento.",
-                    "url" => URL_BASE . "/",
-                    "status" => "success"
-                ));
-            } else {
+        //Verifica se usuario e senha conferem        
+        $authenticate = (new User)->authenticateUser($data["email"], $data["password"]);
 
-                echo json_encode(array(
-                    "message" => "Email ou senha incorretos!",
-                    "status" => "error"
-                ));
-            }
+        if ($authenticate) {
+
+            echo Helper::jsonSend("Vamos te logar agora, um momento.", "success", "/");
         } else {
-            echo json_encode(array(
-                "message" => "Preencha todos os campos!",
-                "status" => "error"
-            ));
+
+            echo Helper::jsonSend("Email ou senha incorretos!", "error");
         }
     }
 
     public function registerUser(array $data)
     {
+        $inputs = ["email", "password", "confirmpassword", "name"];
+
         //Verifico se os campos estão preenchidos
-        if (!empty($data["email"]) && !empty($data["password"]) && !empty($data["confirmpassword"]) && !empty($data["name"])) {
+        if (Helper::isEmpty($inputs, $data)) {
+            echo Helper::jsonSend("Preencha todos os campos!", "error");
+            return;
+        }
+        // Confirma a igualdade das senhas
+        if ($data['password'] != $data['confirmpassword']) {
+            echo Helper::jsonSend("Senhas diferentes!", "error");
+            return;
+        }
 
-            // Confirma a igualdade das senhas
-            if ($data['password'] == $data['confirmpassword']) {
+        unset($data['confirmpassword']);
 
-                unset($data['confirmpassword']);
+        $user = new User();
 
-                $user = new User();
+        $userHasEmail = $user->findByEmail($data['email']);
 
-                $userHasEmail = $user->findByEmail($data['email']);
+        if (!$userHasEmail) {
 
-                if (!$userHasEmail) {
+            $create = $user->createUser($data);
 
-                    $create = $user->createUser($data);
+            if ($create) {
 
-                    if ($create) {
-                        echo json_encode(array(
-                            "msg" => "Bem-Vindo",
-                            "status" => "success",
-                            "url" => URL_BASE . "/"
-                        ));
-                    } else {
-                        echo json_encode(array(
-                            "message" => "Desculpe, tivemos um erro inesperado!",
-                            "status" => "error"
-                        ));
-                    }
-                } else {
-                    echo json_encode(array(
-                        "message" => "Email já cadastrado!",
-                        "status" => "error"
-                    ));
-                }
+                echo Helper::jsonSend("Bem-Vindo", "success", "/");
             } else {
-                echo json_encode(array(
-                    "message" => "Senhas diferentes!",
-                    "status" => "error"
-                ));
+
+                echo Helper::jsonSend("Desculpe, tivemos um erro inesperado!", "error");
             }
         } else {
-            echo json_encode(array(
-                "message" => "Preencha todos os campos!",
-                "status" => "error"
-            ));
+
+            echo Helper::jsonSend("Email já cadastrado!", "error");
         }
     }
 }

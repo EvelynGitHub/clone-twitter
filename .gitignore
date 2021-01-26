@@ -1,2 +1,5 @@
 /vendor/
 /env.php
+
+/Dockerfile
+/docker-compose.yml

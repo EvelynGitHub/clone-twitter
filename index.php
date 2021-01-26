@@ -9,6 +9,10 @@ $route = new Route(URL_BASE);
 
 $route->namespace("App\\Controllers");
 
+$route->get("/", function () {
+    echo "oi";
+});
+
 $route->post("/login", "UserController:loginUser");
 $route->post("/register", "UserController:registerUser");
 
