@@ -5,12 +5,13 @@ namespace App\Helpers;
 trait Helper
 {
 
-
-    public function jsonSend(string $message, int $status)
+    public function jsonSend(string $message, int $status = HttpStatusCode::__default, $token = null, $data = [])
     {
         $array = array(
             "message" => $message,
-            "status" => $status
+            "status" => $status,
+            "token" => $token,
+            "data" => $data
         );
 
         http_response_code($status);
