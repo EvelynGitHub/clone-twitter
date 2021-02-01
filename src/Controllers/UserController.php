@@ -5,12 +5,25 @@ namespace App\Controllers;
 
 use App\Helpers\Helper;
 use App\Helpers\HttpStatusCode;
+use App\Helpers\JWTWrapper;
 use App\Models\User;
 
 class UserController
 {
 
     use Helper;
+
+    private $route;
+
+    public function __construct($route)
+    {
+        $this->route = $route;
+    }
+
+    public function testeIn()
+    {
+        return json_encode($this->route);
+    }
 
     public function loginUser(array $data)
     {
@@ -23,10 +36,20 @@ class UserController
         //Verifica se usuario e senha conferem        
         $authenticate = (new User)->authenticateUser($data["email"], $data["password"]);
 
-        if ($authenticate)
-            return Helper::jsonSend("Vamos te logar agora, um momento.", HttpStatusCode::ACCEPTED);
+        if (!$authenticate)
+            return Helper::jsonSend("Email ou senha incorretos!", HttpStatusCode::BAD_REQUEST);
 
-        return Helper::jsonSend("Email ou senha incorretos!", HttpStatusCode::BAD_REQUEST);
+
+        $jwt = JWTWrapper::encode([
+            'expiration_sec' => 3600,
+            'iss' => URL_BASE,
+            'userdata' => [
+                'id' => $authenticate->id,
+                'name' => $authenticate->name
+            ]
+        ]);
+
+        return Helper::jsonSend("Um momento.", HttpStatusCode::ACCEPTED, $jwt);
     }
 
     public function registerUser(array $data)
@@ -34,10 +57,12 @@ class UserController
         $inputs = ["email", "password", "confirmpassword", "name"];
 
         //Verifico se os campos estão preenchidos
-        if (Helper::isEmpty($inputs, $data)) return Helper::jsonSend("Preencha todos os campos!", HttpStatusCode::BAD_REQUEST);
+        if (Helper::isEmpty($inputs, $data))
+            return Helper::jsonSend("Preencha todos os campos!", HttpStatusCode::BAD_REQUEST);
 
         // Confirma a igualdade das senhas
-        if ($data['password'] != $data['confirmpassword']) return Helper::jsonSend("Senhas diferentes!", HttpStatusCode::BAD_REQUEST);
+        if ($data['password'] != $data['confirmpassword'])
+            return Helper::jsonSend("Senhas diferentes!", HttpStatusCode::BAD_REQUEST);
 
         unset($data['confirmpassword']);
 
@@ -45,47 +70,79 @@ class UserController
 
         $userHasEmail = $user->findByEmail($data['email']);
 
-        if (!$userHasEmail) {
-
-            $create = $user->createUser($data);
-
-            if ($create) return Helper::jsonSend("Bem-Vindo", "success", "/");
-
-            return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
+        if ($userHasEmail) {
+            return Helper::jsonSend("Email já cadastrado!", HttpStatusCode::BAD_REQUEST);
         }
 
-        return Helper::jsonSend("Email já cadastrado!", HttpStatusCode::BAD_REQUEST);
+        $create = $user->createUser($data);
+
+        if (!$create)
+            return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
+
+
+        $authenticate = $user->findById($create);
+        // return json_encode($create);
+
+        $jwt = JWTWrapper::encode([
+            'expiration_sec' => 3600,
+            'iss' => URL_BASE,
+            'userdata' => [
+                'id' => $authenticate->id,
+                'name' => $authenticate->name
+            ]
+        ]);
+
+        return Helper::jsonSend("Bem-Vindo.", HttpStatusCode::ACCEPTED, $jwt);
     }
 
-    public function getDataUser(int $id)
+    public function getDataUser($slugOuid)
     {
-        # code...
+        $user = new User;
+
+        $result = $user->findBySlug($slugOuid);
+
+        unset($result->password);
+
+        return json_encode($result);
     }
 
     public function setDataUser(array $data)
     {
-        $inputs = ["email", "password", "name", "bio", "slug"];
+        $inputs = ["email", "name", "bio", "slug"];
 
         //Verifico se os campos estão preenchidos
-        if (Helper::isEmpty($inputs, $data)) return Helper::jsonSend("Preencha todos os campos!", HttpStatusCode::BAD_REQUEST);
+        if (Helper::isEmpty($inputs, $data))
+            return Helper::jsonSend("Preencha todos os campos!", HttpStatusCode::BAD_REQUEST);
 
         $user = new User();
 
-        $authenticate = $user->verifyToken();
+        $authenticatedUser = $user->findById($this->route->inApp->data->id);
 
-        if (!$authenticate) return Helper::jsonSend("Não autenticado", HttpStatusCode::NOT_ACCEPTABLE); // usuário não autenticado
+        if ($data["email"] != $authenticatedUser->email) {
 
-        $userHasEmail = $user->findByEmail($data['email']);
+            $userHasEmail = $user->findByEmail($data['email']);
 
-        if ($userHasEmail) return Helper::jsonSend("Email já cadastrado!", HttpStatusCode::BAD_REQUEST);
+            if ($userHasEmail) return Helper::jsonSend("Email já cadastrado!", HttpStatusCode::BAD_REQUEST);
+        }
 
-        $userHasSlug = $user->findBySlug($data["slug"]);
+        if ($data["slug"] != $authenticatedUser->slug) {
+            $userHasSlug = $user->findBySlug($data["slug"]);
 
-        if ($userHasSlug) return Helper::jsonSend("Nome de Usuário já cadastrado!", HttpStatusCode::BAD_REQUEST);
+            if ($userHasSlug) return Helper::jsonSend("Nome de Usuário já cadastrado!", HttpStatusCode::BAD_REQUEST);
+        }
 
-        $update = $user->updateUser($authenticate->id, ((object) $data));
+        if (!empty($data["password"])) {
 
-        if ($update) return Helper::jsonSend("Bem-Vindo", "success", "/");
+            $data["password"] = $user->generatePassword($data["password"]);
+        }
+
+        if (!isset($data["password"])) {
+            $data["password"] = $authenticatedUser->password;
+        }
+
+        $update = $user->updateUser($authenticatedUser->id, ((object) $data));
+
+        if ($update) return Helper::jsonSend("Dados alterados com sucesso", HttpStatusCode::OK);
 
         return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
     }
@@ -93,13 +150,12 @@ class UserController
     // Seguir Usuário 
     public function followUser(int $id)
     {
+        if ($id == $this->route->inApp->data->id)
+            return Helper::jsonSend("Você não pode seguir a si mesmo!", HttpStatusCode::BAD_REQUEST);
+
         $user = new User();
 
-        $authenticate = $user->verifyToken();
-
-        // usuário não autenticado
-        if (!$authenticate)
-            return Helper::jsonSend("Você precisa se logar para seguir alguém!", HttpStatusCode::BAD_REQUEST);
+        $authenticate = $user->findById($this->route->inApp->data->id);
 
         if (!$user->createFollow($id, $authenticate->id))
             return Helper::jsonSend("Você já segue essa pessoa!", HttpStatusCode::BAD_REQUEST);
@@ -112,12 +168,12 @@ class UserController
     {
         $user = new User();
 
-        $authenticate = $user->verifyToken();
+        // $authenticate = $user->verifyToken();
 
-        if (!$authenticate)
-            return Helper::jsonSend("Você precisa se logar para deixa de seguir alguém!", HttpStatusCode::BAD_REQUEST);
+        // if (!$authenticate)
+        //     return Helper::jsonSend("Você precisa se logar para deixa de seguir alguém!", HttpStatusCode::BAD_REQUEST);
 
-        if (!$user->deleteFollow($id, $authenticate->id))
+        if (!$user->deleteFollow($id, $this->route->inApp->data->id))
             return Helper::jsonSend("Desculpe, tente de novo mais tarde!", HttpStatusCode::INTERNAL_SERVER_ERROR);
 
         return Helper::jsonSend("Agora você não segue mais essa pessoa!", HttpStatusCode::OK);
@@ -128,17 +184,18 @@ class UserController
     {
         $user = new User();
 
-        $authenticate = $user->verifyToken();
+        // $authenticate = $user->verifyToken();
 
-        if (!$authenticate) return Helper::jsonSend("Não autenticado", HttpStatusCode::NOT_ACCEPTABLE); // usuário não autenticado
+        // if (!$authenticate) return Helper::jsonSend("Não autenticado", HttpStatusCode::NOT_ACCEPTABLE); // usuário não autenticado
 
         // Verifico se usuário com esse slug existe
         $userHasSlug = $user->findBySlug($slug);
 
         //Se não existir esse user
-        if ($userHasSlug) return Helper::jsonSend("Nenhuma informação encontrada!", HttpStatusCode::NOT_ACCEPTABLE);
+        if (!$userHasSlug) return Helper::jsonSend("Nenhuma informação encontrada!", HttpStatusCode::NOT_ACCEPTABLE);
 
         // Se exitir trago os usuários que ele está seguindo
+        // return json_encode($user->findByFollow($userHasSlug->id, $this->route_inApp->data->id));
         return json_encode($user->findByFollow($userHasSlug->id));
     }
 }
