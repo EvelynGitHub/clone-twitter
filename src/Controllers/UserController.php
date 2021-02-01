@@ -45,7 +45,8 @@ class UserController
             'iss' => URL_BASE,
             'userdata' => [
                 'id' => $authenticate->id,
-                'name' => $authenticate->name
+                'name' => $authenticate->name,
+                "token" => $authenticate->token
             ]
         ]);
 
@@ -88,7 +89,8 @@ class UserController
             'iss' => URL_BASE,
             'userdata' => [
                 'id' => $authenticate->id,
-                'name' => $authenticate->name
+                'name' => $authenticate->name,
+                "token" => $authenticate->token
             ]
         ]);
 
@@ -116,19 +118,21 @@ class UserController
 
         $user = new User();
 
-        $authenticatedUser = $user->findById($this->route->inApp->data->id);
+        $authenticatedUser = $user->findByIdAndToken($this->route->inApp->data->id, $this->route->inApp->data->token);
 
         if ($data["email"] != $authenticatedUser->email) {
 
             $userHasEmail = $user->findByEmail($data['email']);
 
-            if ($userHasEmail) return Helper::jsonSend("Email já cadastrado!", HttpStatusCode::BAD_REQUEST);
+            if ($userHasEmail)
+                return Helper::jsonSend("Email já cadastrado!", HttpStatusCode::BAD_REQUEST);
         }
 
         if ($data["slug"] != $authenticatedUser->slug) {
             $userHasSlug = $user->findBySlug($data["slug"]);
 
-            if ($userHasSlug) return Helper::jsonSend("Nome de Usuário já cadastrado!", HttpStatusCode::BAD_REQUEST);
+            if ($userHasSlug)
+                return Helper::jsonSend("Nome de Usuário já cadastrado!", HttpStatusCode::BAD_REQUEST);
         }
 
         if (!empty($data["password"])) {
@@ -168,11 +172,6 @@ class UserController
     {
         $user = new User();
 
-        // $authenticate = $user->verifyToken();
-
-        // if (!$authenticate)
-        //     return Helper::jsonSend("Você precisa se logar para deixa de seguir alguém!", HttpStatusCode::BAD_REQUEST);
-
         if (!$user->deleteFollow($id, $this->route->inApp->data->id))
             return Helper::jsonSend("Desculpe, tente de novo mais tarde!", HttpStatusCode::INTERNAL_SERVER_ERROR);
 
@@ -184,10 +183,6 @@ class UserController
     {
         $user = new User();
 
-        // $authenticate = $user->verifyToken();
-
-        // if (!$authenticate) return Helper::jsonSend("Não autenticado", HttpStatusCode::NOT_ACCEPTABLE); // usuário não autenticado
-
         // Verifico se usuário com esse slug existe
         $userHasSlug = $user->findBySlug($slug);
 
@@ -195,7 +190,6 @@ class UserController
         if (!$userHasSlug) return Helper::jsonSend("Nenhuma informação encontrada!", HttpStatusCode::NOT_ACCEPTABLE);
 
         // Se exitir trago os usuários que ele está seguindo
-        // return json_encode($user->findByFollow($userHasSlug->id, $this->route_inApp->data->id));
         return json_encode($user->findByFollow($userHasSlug->id));
     }
 }

@@ -10,11 +10,6 @@ class User extends Crud
 
     //INICIO: Funções apenas de User
 
-    private function buildUser(array $data)
-    {
-        # code...
-    }
-
     public function generatePassword(string $password): string
     {
         return password_hash($password, PASSWORD_DEFAULT);;
@@ -29,24 +24,6 @@ class User extends Crud
     {
         return $name;
     }
-
-    // private function setTokenSession(string $token)
-    // {
-    //     $_SESSION['token'] = $token;
-    // }
-
-    // public function verifyToken()
-    // {
-    //     if (empty($_SESSION['token'])) return false;
-
-    //     $token = $_SESSION['token'];
-
-    //     $user = $this->findByToken($token);
-
-    //     if (!$user) return false;
-
-    //     return $user;
-    // }
 
     //FIM: Funções apenas de User
 
@@ -63,8 +40,6 @@ class User extends Crud
         ksort($data);
 
         $user = $this->insert("users", $data)->execute("lastIdInsert");
-
-        // if ($user) $this->setTokenSession($data['token']);
 
         return $user;
     }
@@ -131,13 +106,21 @@ class User extends Crud
 
         return $user;
     }
+    public function findByIdAndToken(string $id, string $token)
+    {
+        $user = $this->select()
+            ->from("users")
+            ->where("id = ? AND token = ?", [$id, $token])
+            ->execute("fetch");
+
+        return $user;
+    }
 
     public function findByFollow(int $user_id_follower, int $user_id = 0)
     {
         $crud = $this->select("f.user_id, u.name, u.slug, f.create_at")
             ->from("follows f 
-                    INNER JOIN users u ON f.user_id = u.id
-            ")
+                    INNER JOIN users u ON f.user_id = u.id ")
             ->where("f.user_id_followers = ? ", [$user_id_follower])
             ->execute("fetchAll");
 
@@ -166,17 +149,14 @@ class User extends Crud
     {
         $user = $this->findByEmail($email);
 
-        if ($user) {
-            //as senhas conferem
-            if (password_verify($password, $user->password)) {
+        if (!$user) return false;
 
-                return $user;
-            }
-            // senhas erradas
-            return false;
-        } else {
-            return false;
+        //as senhas conferem
+        if (password_verify($password, $user->password)) {
+            return $user;
         }
+        // senhas erradas
+        return false;
     }
 
     // FIM: Funções realicionas ao Banco de Dados
