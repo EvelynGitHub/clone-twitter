@@ -5,14 +5,15 @@ namespace App\Helpers;
 trait Helper
 {
 
-    public function jsonSend(string $message, string $status, string $url = null)
+
+    public function jsonSend(string $message, int $status)
     {
         $array = array(
             "message" => $message,
             "status" => $status
         );
 
-        $url ?? ($array["url"] =  URL_BASE . $url);
+        http_response_code($status);
 
         return json_encode($array);
     }
