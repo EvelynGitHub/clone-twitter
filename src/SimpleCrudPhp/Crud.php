@@ -163,6 +163,8 @@ abstract class Crud
                         $rs = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     } else if ($fetch == "rowCount") {
                         $rs = $stmt->rowCount();
+                    } else if ($fetch == "lastIdInsert") {
+                        $rs = $conn->lastInsertId();
                     }
                     return $rs;
                 }
