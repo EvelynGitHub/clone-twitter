@@ -30,6 +30,19 @@ class User extends Crud
         $_SESSION['token'] = $token;
     }
 
+    public function verifyToken()
+    {
+        if (empty($_SESSION['token'])) return false;
+
+        $token = $_SESSION['token'];
+
+        $user = $this->findByToken($token);
+
+        if (!$user) return false;
+
+        return $user;
+    }
+
     //FIM: Funções apenas de User
 
 
@@ -50,7 +63,18 @@ class User extends Crud
         return $user;
     }
 
-    private function updateUser(int $id, object $user)
+    public function createFollow(int $user_id, int $user_id_follower)
+    {
+        $follows = $this->insert(
+            "follows",
+            [$user_id, $user_id_follower],
+            "user_id, user_id_followers"
+        )->execute();
+
+        return $follows;
+    }
+
+    public function updateUser(int $id, object $user)
     {
         //Trasformo o object em array
         $data = get_object_vars($user);
@@ -81,7 +105,49 @@ class User extends Crud
         return $user;
     }
 
+    public function findBySlug(string $slug)
+    {
+        $user = $this->select()->from("users")->where("slug = ?", [$slug])->execute("fetch");
 
+        return $user;
+    }
+
+    public function findByToken(string $token)
+    {
+        $user = $this->select()
+            ->from("users")
+            ->where("token = ?", [$token])
+            ->execute("fetch");
+
+        return $user;
+    }
+
+    public function findByFollow(int $user_id_follower)
+    {
+        $crud = $this->select()
+            ->from('follows')
+            ->where("user_id_followers = ? ", [$user_id_follower])
+            ->execute("fetchAll");
+
+        return $crud;
+    }
+
+    public function deleteUser(int $id)
+    {
+        $crud = $this->delete()->from('users')->where("id = ?", [$id])->execute();
+
+        return $crud;
+    }
+
+    public function deleteFollow(int $user_id_follower, int $user_id)
+    {
+        $crud = $this->delete()
+            ->from('follows')
+            ->where("user_id_followers = ? AND user_id = ?", [$user_id_follower, $user_id])
+            ->execute();
+
+        return $crud;
+    }
 
 
     public function authenticateUser(string $email, string $password)
@@ -107,6 +173,5 @@ class User extends Crud
     }
 
     // FIM: Funções realicionas ao Banco de Dados
-
 
 }
