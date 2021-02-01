@@ -4,7 +4,7 @@ use App\SimpleRoutePhp\Route;
 
 //INICIO: HEADER
 header("Access-Control-Allow-Origin: *"); //Qualquer site pode acessar
-header("Content-Type: application/json; charset=UTF-8"); //tipo de retorno
+// header("Content-Type: application/json; charset=UTF-8"); //tipo de retorno
 header("Access-Control-Allow-Methods: GET, POST, PUT, PATCH, DELETE"); // tipos de verbos http aceitos
 header("Access-Control-Max-Age: 3600"); // Durabilidade Máxima de 1 hora
 header("Access-Control-Allow-Headers: Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With"); // Habilita alguma autorização
@@ -18,12 +18,22 @@ $route = new Route(URL_BASE);
 
 $route->namespace("App\\Controllers");
 
-$route->get("/", function () {
-    echo "oi";
+$route->get("/", function ($data) {
+    echo json_encode("oi");
 });
 
 $route->post("/login", "UserController:loginUser");
 $route->post("/register", "UserController:registerUser");
+$route->get("/{slug}", "UserController:getDataUser");
+
+$route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
+
+    $route->put("/perfil", "UserController:setDataUser");
+
+    $route->get("/follow/{slug}", "UserController:followingUsers");
+    $route->post("/follow/{id}", "UserController:followUser");
+});
+
 
 
 $route->dispatch();
