@@ -111,7 +111,7 @@ class Route
                 // $key = localhost/teste/([^/]+)
                 if (preg_match("~^" . $key . "$~", $urlNow, $found)) {
                     //has $key at $urlNow
-                    $this->execute($value, $urlNow);
+                    echo $this->execute($value, $urlNow);
                     break;
                 }
             }
@@ -144,10 +144,9 @@ class Route
         if (is_callable($data["handler"])) {
             $method = $data["handler"];
 
-            call_user_func($method, ...$paramsForm);
-
             $this->setError(false, "Not Error");
-            return true;
+
+            return call_user_func($method, ...$paramsForm);
         }
 
         list($class, $method) = explode(":", $data["handler"]);
@@ -160,10 +159,9 @@ class Route
 
                 $obj = new $class($this);
 
-                $obj->$method(...$paramsForm);
-
                 $this->setError(false, "Not Error");
-                return true;
+
+                return $obj->$method(...$paramsForm);
             }
             $this->setError(true, "Method not exists: {$method}()", 500);
             return false;
