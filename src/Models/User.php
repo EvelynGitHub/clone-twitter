@@ -15,7 +15,7 @@ class User extends Crud
         # code...
     }
 
-    private function generatePassword(string $password): string
+    public function generatePassword(string $password): string
     {
         return password_hash($password, PASSWORD_DEFAULT);;
     }
@@ -25,23 +25,28 @@ class User extends Crud
         return bin2hex(random_bytes(50));
     }
 
-    private function setTokenSession(string $token)
+    private function generateSlug(string $name)
     {
-        $_SESSION['token'] = $token;
+        return $name;
     }
 
-    public function verifyToken()
-    {
-        if (empty($_SESSION['token'])) return false;
+    // private function setTokenSession(string $token)
+    // {
+    //     $_SESSION['token'] = $token;
+    // }
 
-        $token = $_SESSION['token'];
+    // public function verifyToken()
+    // {
+    //     if (empty($_SESSION['token'])) return false;
 
-        $user = $this->findByToken($token);
+    //     $token = $_SESSION['token'];
 
-        if (!$user) return false;
+    //     $user = $this->findByToken($token);
 
-        return $user;
-    }
+    //     if (!$user) return false;
+
+    //     return $user;
+    // }
 
     //FIM: Funções apenas de User
 
@@ -52,23 +57,28 @@ class User extends Crud
     {
         $data['password'] = $this->generatePassword($data['password']);
         $data['token'] = $this->generateToken();
+        $data['slug'] = $this->generateSlug($data["name"]);
 
         // Garrantindo a ordem da inserção ao ordenar o array $data
         ksort($data);
 
-        $user = $this->insert("users", $data)->execute();
+        $user = $this->insert("users", $data)->execute("lastIdInsert");
 
-        if ($user) $this->setTokenSession($data['token']);
+        // if ($user) $this->setTokenSession($data['token']);
 
         return $user;
     }
 
     public function createFollow(int $user_id, int $user_id_follower)
     {
+        $data = array(
+            "user_id" => $user_id,
+            "user_id_followers" => $user_id_follower
+        );
+
         $follows = $this->insert(
             "follows",
-            [$user_id, $user_id_follower],
-            "user_id, user_id_followers"
+            $data
         )->execute();
 
         return $follows;
@@ -81,7 +91,7 @@ class User extends Crud
 
         unset($data['id']);
         unset($data['create_at']);
-        unset($data['slug']);
+        unset($data['token']);
 
         ksort($data);
 
@@ -90,7 +100,7 @@ class User extends Crud
                                 email = ?,
                                 name = ?,
                                 password = ?,    
-                                token = ?
+                                slug = ?
                             ", $data)
             ->where("id = ?", [$id])
             ->execute();
@@ -112,21 +122,23 @@ class User extends Crud
         return $user;
     }
 
-    public function findByToken(string $token)
+    public function findById(string $id)
     {
         $user = $this->select()
             ->from("users")
-            ->where("token = ?", [$token])
+            ->where("id = ?", [$id])
             ->execute("fetch");
 
         return $user;
     }
 
-    public function findByFollow(int $user_id_follower)
+    public function findByFollow(int $user_id_follower, int $user_id = 0)
     {
-        $crud = $this->select()
-            ->from('follows')
-            ->where("user_id_followers = ? ", [$user_id_follower])
+        $crud = $this->select("f.user_id, u.name, u.slug, f.create_at")
+            ->from("follows f 
+                    INNER JOIN users u ON f.user_id = u.id
+            ")
+            ->where("f.user_id_followers = ? ", [$user_id_follower])
             ->execute("fetchAll");
 
         return $crud;
@@ -157,16 +169,11 @@ class User extends Crud
         if ($user) {
             //as senhas conferem
             if (password_verify($password, $user->password)) {
-                $user->token = $this->generateToken();
 
-                // Se a atualização do token ter sucesso
-                if ($this->updateUser($user->id, $user)) {
-                    $this->setTokenSession($user->token);
-                    return true;
-                }
-
-                return false;
+                return $user;
             }
+            // senhas erradas
+            return false;
         } else {
             return false;
         }
