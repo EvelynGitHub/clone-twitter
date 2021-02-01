@@ -12,6 +12,7 @@ class Route
     private string $namespace = "";
     private array $error = [];
 
+    public $inApp;
 
     public function __construct($baseUrl)
     {
@@ -168,6 +169,49 @@ class Route
         }
 
         $this->setError(true, "Class not exist: {$class}", 500);
+        return false;
+    }
+
+
+    public function middleware($before, $after)
+    {
+        if (is_callable($before)) {
+
+            echo json_encode("Aqui dentro");
+
+            if (call_user_func($before, $this)) {
+
+                if (is_callable($after)) {
+                    call_user_func($after);
+
+                    return;
+                }
+            }
+
+            return false;
+        }
+
+        list($class, $method) = explode(":", $before);
+
+        if (class_exists($class)) {
+
+            if (method_exists($class, $method)) {
+
+                $obj = new $class($this);
+
+                if ($obj->$method($this)) {
+
+                    if (is_callable($after)) {
+                        call_user_func($after);
+
+                        return;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         return false;
     }
 
