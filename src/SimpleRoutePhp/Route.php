@@ -92,7 +92,7 @@ class Route
         if (in_array($this->method, $typeRequest)) {
             //parse_str tranforma a string em array associativo
             parse_str(file_get_contents("php://input"), $array);
-            return $array ?? [ççç];
+            return $array ?? [];
         }
 
         //https://www.php.net/manual/pt_BR/wrappers.php.php
