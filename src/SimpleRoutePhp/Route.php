@@ -103,22 +103,12 @@ class Route
     {
         // $urlNow = localhost/teste/5
         $urlNow = "{$this->baseUrl}{$this->path}";
-<<<<<<< Updated upstream
         // 
         $this->setError(true, "Route not found: {$urlNow}", 404);
         if (isset($this->routes[$this->method])) {
             foreach ($this->routes[$this->method] as $key => $value) {
                 // $key = localhost/teste/([^/]+)
 
-=======
-
-        $this->setError(true, "Route not found: {$urlNow}", 404);
-
-        if (isset($this->routes[$this->method])) {
-
-            foreach ($this->routes[$this->method] as $key => $value) {
-                // $key = localhost/teste/([^/]+)
->>>>>>> Stashed changes
                 if (preg_match("~^" . $key . "$~", $urlNow, $found)) {
                     //has $key at $urlNow
                     echo $this->execute($value, $urlNow);
@@ -168,7 +158,6 @@ class Route
             if (method_exists($class, $method)) {
 
                 $obj = new $class($this);
-<<<<<<< Updated upstream
 
                 $this->setError(false, "Not Error");
 
@@ -220,59 +209,6 @@ class Route
             return false;
         }
 
-=======
-
-                $this->setError(false, "Not Error");
-
-                return $obj->$method(...$paramsForm);
-            }
-            $this->setError(true, "Method not exists: {$method}()", 500);
-            return false;
-        }
-
-        $this->setError(true, "Class not exist: {$class}", 500);
-        return false;
-    }
-
-
-    public function middleware($before, $after)
-    {
-        if (is_callable($before)) {
-
-            if (call_user_func($before, $this)) {
-
-                if (is_callable($after)) {
-                    call_user_func($after);
-                    return;
-                }
-            }
-
-            return false;
-        }
-
-        list($class, $method) = explode(":", $before);
-
-        if (class_exists($class)) {
-            if (method_exists($class, $method)) {
-                $obj = new $class;
-
-                $v = $obj->$method($this);
-
-                if (!$v["error"]) {
-
-                    if (is_callable($after)) {
-                        call_user_func($after);
-
-                        return;
-                    }
-                }
-                return;
-            }
-
-            return false;
-        }
-
->>>>>>> Stashed changes
         return false;
     }
 
