@@ -54,14 +54,14 @@ class JWTWrapper
                     return $route->inApp = JWTWrapper::decode($jwt);
                 } catch (Exception $ex) {
                     // nao foi possivel decodificar o token jwt
-                    return false;
+                    return ["error" => true, "message" => "Acesso nao autorizado"];
                 }
             } else {
                 // nao foi possivel extrair token do header Authorization
-                return false;
+                return ["error" => true, "message" => "Token nao informado"];
             }
         }
 
-        return false;
+        return ["error" => true, "message" => "Header Authorization não encontrado"];
     }
 }

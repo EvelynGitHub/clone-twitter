@@ -28,18 +28,16 @@ $route->get("/{slug}", "UserController:getDataUser");
 
 $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
 
+    $route->get("/teste/in", "UserController:testeIn");
     $route->put("/perfil", "UserController:setDataUser");
 
     $route->get("/follow/{slug}", "UserController:followingUsers");
     $route->post("/follow/{id}", "UserController:followUser");
 });
 
-
-
 $route->dispatch();
 
 $error = $route->getError();
-
 
 if ($error["error"]) {
     echo json_encode($error);

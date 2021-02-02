@@ -22,6 +22,8 @@ class UserController
 
     public function testeIn()
     {
+
+        return json_encode("testeIn");
         return json_encode($this->route);
     }
 
@@ -102,6 +104,8 @@ class UserController
         $user = new User;
 
         $result = $user->findBySlug($slugOuid);
+        if (!$result)
+            return Helper::jsonSend("Nenhuma informação encontrada!", HttpStatusCode::NOT_ACCEPTABLE);
 
         unset($result->password);
 

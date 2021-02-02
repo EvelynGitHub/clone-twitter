@@ -103,13 +103,12 @@ class Route
     {
         // $urlNow = localhost/teste/5
         $urlNow = "{$this->baseUrl}{$this->path}";
-
+        // 
         $this->setError(true, "Route not found: {$urlNow}", 404);
-
         if (isset($this->routes[$this->method])) {
-
             foreach ($this->routes[$this->method] as $key => $value) {
                 // $key = localhost/teste/([^/]+)
+
                 if (preg_match("~^" . $key . "$~", $urlNow, $found)) {
                     //has $key at $urlNow
                     echo $this->execute($value, $urlNow);
@@ -177,13 +176,10 @@ class Route
     {
         if (is_callable($before)) {
 
-            echo json_encode("Aqui dentro");
-
             if (call_user_func($before, $this)) {
 
                 if (is_callable($after)) {
                     call_user_func($after);
-
                     return;
                 }
             }
@@ -194,12 +190,12 @@ class Route
         list($class, $method) = explode(":", $before);
 
         if (class_exists($class)) {
-
             if (method_exists($class, $method)) {
+                $obj = new $class;
 
-                $obj = new $class($this);
+                $v = $obj->$method($this);
 
-                if ($obj->$method($this)) {
+                if (!$v["error"]) {
 
                     if (is_callable($after)) {
                         call_user_func($after);
@@ -207,6 +203,7 @@ class Route
                         return;
                     }
                 }
+                return;
             }
 
             return false;
