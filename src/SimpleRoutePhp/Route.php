@@ -86,13 +86,13 @@ class Route
 
         if ($this->method == "POST") {
             $array = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-            return $array;
+            return $array ?? [];
         }
 
         if (in_array($this->method, $typeRequest)) {
             //parse_str tranforma a string em array associativo
             parse_str(file_get_contents("php://input"), $array);
-            return $array;
+            return $array ?? [ççç];
         }
 
         //https://www.php.net/manual/pt_BR/wrappers.php.php
