@@ -12,8 +12,7 @@ class Tweet extends Crud
         //$tweetToken ainda não criado no banco, mas preparado aqui para quando criar
         $crud = $this->insert(
             "tweets",
-            [$description, $userId],
-            "description, users_id"
+            ["description" => $description, "user_id" => $userId]
         )->execute();
 
         return $crud;

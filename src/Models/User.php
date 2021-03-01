@@ -106,6 +106,7 @@ class User extends Crud
 
         return $user;
     }
+
     public function findByIdAndToken(string $id, string $token)
     {
         $user = $this->select()

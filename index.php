@@ -33,6 +33,9 @@ $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
 
     $route->get("/follow/{slug}", "UserController:followingUsers");
     $route->post("/follow/{id}", "UserController:followUser");
+
+
+    $route->post("/tweet", "TweetController:setTweet");
 });
 
 $route->dispatch();

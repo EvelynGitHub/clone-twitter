@@ -195,7 +195,7 @@ class Route
 
                 $v = $obj->$method($this);
 
-                if (!$v["error"]) {
+                if (!key_exists("error", $v)) {
 
                     if (is_callable($after)) {
                         call_user_func($after);
