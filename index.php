@@ -34,6 +34,7 @@ $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
     $route->get("/teste/in", "UserController:testeIn");
 
     $route->put("/perfil", "UserController:setDataUser");
+    $route->delete("/perfil", "UserController:deleteUser");
     $route->get("/perfil/tweet/{start}/{end}", "TweetController:getMyTweets");
 
     $route->get("/follow/{slug}", "UserController:followingUsers");

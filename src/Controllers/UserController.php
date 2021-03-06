@@ -182,6 +182,17 @@ class UserController
         return Helper::jsonSend("Agora você não segue mais essa pessoa!", HttpStatusCode::OK);
     }
 
+    // Equivalente a apagar a conta
+    public function deleteUser()
+    {
+        $user = new User();
+
+        if (!$user->deleteUser($this->route->inApp->data->id))
+            return Helper::jsonSend("Desculpe, tente de novo mais tarde!", HttpStatusCode::INTERNAL_SERVER_ERROR);
+
+        return Helper::jsonSend("Agora você não segue mais essa pessoa!", HttpStatusCode::OK);
+    }
+
     // Seguindo usuários
     public function followingUsers(string $slug)
     {
