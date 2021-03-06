@@ -70,8 +70,8 @@ class Tweet extends Crud
                 ->where("u.id = ?", [$id]);
         }
 
-        // ->limit($start, $end)
         $crud = $crud->order("t.create_at", "DESC")
+            ->limit($end, $start)
             ->execute("fetchAll");
 
         for ($i = 0; $i < count($crud); $i++) {
@@ -97,11 +97,8 @@ class Tweet extends Crud
             ->from("users u
                     INNER JOIN comments c ON u.id = c.user_id")
             ->where("c.tweet_id = ?", [$tweetId])
-            // ->limit($start, $end)
+            ->limit($end, $start)
             ->execute("fetchAll");
-
-        // var_dump($crud);
-        // var_dump($this->getError());
 
         return $crud;
     }

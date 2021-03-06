@@ -112,7 +112,7 @@ abstract class Crud
      */
     protected function limit(int $start = 0, int $end = 10): ?Crud
     {
-        $this->query .= " LIMIT $start, $end";
+        $this->query .= " LIMIT $start OFFSET $end";
         return $this;
     }
 
