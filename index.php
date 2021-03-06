@@ -24,6 +24,9 @@ $route->get("/", function ($data) {
 
 $route->post("/login", "UserController:loginUser");
 $route->post("/register", "UserController:registerUser");
+$route->get("/tweet", "TweetController:getAllTweets");
+$route->get("/comment", "TweetController:getComment");
+
 $route->get("/{slug}", "UserController:getDataUser");
 
 $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
@@ -36,6 +39,7 @@ $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
 
 
     $route->post("/tweet", "TweetController:setTweet");
+    $route->post("/comment/{id}", "TweetController:setComment");
 });
 
 $route->dispatch();

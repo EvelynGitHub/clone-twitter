@@ -6,6 +6,7 @@ use App\Helpers\Helper;
 use App\Helpers\HttpStatusCode;
 use App\Models\Tweet;
 use App\Models\User;
+use DateTime;
 
 class TweetController
 {
@@ -19,8 +20,17 @@ class TweetController
     }
 
 
-    public function getTweet()
+    public function getAllTweets()
     {
+        $start = new DateTime(date("Y-m-d h:i:s"));
+
+        $tweets = (new Tweet())->findAllTweet();
+
+        $end = $start->diff(new DateTime(date("Y-m-d h:i:s")));
+
+        $tempo = "$end->i - $end->s";
+
+        return Helper::jsonSend("Tempo: $tempo", HttpStatusCode::ACCEPTED, null, $tweets);
     }
 
     public function setTweet(array $data)
@@ -44,12 +54,36 @@ class TweetController
         return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
     }
 
-    public function getComment(int $tweetId)
+    public function getComment(array $data)
     {
+        $tweet = (new Tweet())->findAllComment($data["tweet_id"], $data["start"], $data["end"]);
+
+        return Helper::jsonSend("Comentários", HttpStatusCode::OK, null, $tweet);
     }
 
-    public function setComment(array $data)
+    public function setComment(int $tweetId, array $data)
     {
+        $inputs = ["remark"];
+
+        //Verifico se os campos estão preenchidos
+        if (Helper::isEmpty($inputs, $data))
+            return Helper::jsonSend("Preencha o comentário!", HttpStatusCode::BAD_REQUEST);
+
+        $user = new User();
+
+        $authenticatedUser = $user->findByIdAndToken($this->route->inApp->data->id, $this->route->inApp->data->token);
+
+        if ($authenticatedUser) {
+            $tweet = new Tweet();
+
+            $create = $tweet->createComment($data["remark"], $tweetId, $authenticatedUser->id);
+
+            if ($create) return Helper::jsonSend("Comentário feito com sucesso", HttpStatusCode::OK);
+
+            return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
+        }
+
+        return Helper::jsonSend("É preciso estar logar para Tweetar!", HttpStatusCode::INTERNAL_SERVER_ERROR);
     }
 
     public function deleteTweet(int $userId, int $tweetId)
