@@ -19,18 +19,39 @@ class TweetController
         $this->route = $route;
     }
 
-
-    public function getAllTweets()
+    public function getMyTweets(int $start = 0, int $end = 10)
     {
-        $start = new DateTime(date("Y-m-d h:i:s"));
+        $authenticatedUser = (new User())->findByIdAndToken($this->route->inApp->data->id, $this->route->inApp->data->token);
 
-        $tweets = (new Tweet())->findAllTweet();
+        if ($authenticatedUser) {
+            return $this->getAllTweets("my", $authenticatedUser->id, $start, $end);
+        }
 
-        $end = $start->diff(new DateTime(date("Y-m-d h:i:s")));
+        return Helper::jsonSend("É preciso estar logado", HttpStatusCode::BAD_REQUEST);
+    }
 
-        $tempo = "$end->i - $end->s";
+    public function getPersonalTweets(int $start = 0, int $end = 10)
+    {
+        $authenticatedUser = (new User())->findByIdAndToken($this->route->inApp->data->id, $this->route->inApp->data->token);
 
-        return Helper::jsonSend("Tempo: $tempo", HttpStatusCode::ACCEPTED, null, $tweets);
+        if ($authenticatedUser) {
+            return $this->getAllTweets("personal", $authenticatedUser->id, $start, $end);
+        }
+
+        return Helper::jsonSend("É preciso estar logar", HttpStatusCode::BAD_REQUEST);
+    }
+
+    public function getGlobalTweets(int $start = 0, int $end = 10)
+    {
+
+        return $this->getAllTweets("global", 0, $start, $end);
+    }
+
+    private function getAllTweets(string $feed = "global", int $userId = 0, int $start = 0, int $end = 10)
+    {
+        $tweets = (new Tweet())->findAllTweet($feed, $userId, $start, $end);
+
+        return Helper::jsonSend("Tweets ", HttpStatusCode::ACCEPTED, null, $tweets);
     }
 
     public function setTweet(array $data)

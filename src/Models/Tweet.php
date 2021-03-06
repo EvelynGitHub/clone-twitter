@@ -40,7 +40,7 @@ class Tweet extends Crud
         return false;
     }
 
-    public function findAllTweet(int $start = 0, int $end = 10)
+    public function findAllTweet(string $feed, int $id = 0, int $start = 0, int $end = 10)
     {
         $data = [];
 
@@ -51,11 +51,27 @@ class Tweet extends Crud
                 t.id as tweet_id,
                 t.description as tweet_description,
                 t.create_at as tweet_create_at
-            ")
-            ->from("users u
-                INNER JOIN tweets t ON u.id = t.user_id")
-            // ->limit($start, $end)
-            ->order("t.create_at", "DESC")
+            ");
+
+        if ($feed == "global") {
+            $crud = $crud
+                ->from("users u
+                INNER JOIN tweets t ON u.id = t.user_id");
+        } else if ($feed == "personal") {
+            $crud = $crud
+                ->from("users u 
+                INNER JOIN tweets t ON  u.id = t.user_id
+                LEFT JOIN follows f ON u.id = f.user_id")
+                ->where("f.user_id_followers = ? OR u.id = ?", [$id, $id]);
+        } else if ($feed == "my") {
+            $crud = $crud
+                ->from("users u 
+                INNER JOIN tweets t ON  u.id = t.user_id")
+                ->where("u.id = ?", [$id]);
+        }
+
+        // ->limit($start, $end)
+        $crud = $crud->order("t.create_at", "DESC")
             ->execute("fetchAll");
 
         for ($i = 0; $i < count($crud); $i++) {

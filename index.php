@@ -24,7 +24,7 @@ $route->get("/", function ($data) {
 
 $route->post("/login", "UserController:loginUser");
 $route->post("/register", "UserController:registerUser");
-$route->get("/tweet", "TweetController:getAllTweets");
+$route->get("/tweet/{start}/{end}", "TweetController:getGlobalTweets");
 $route->get("/comment", "TweetController:getComment");
 
 $route->get("/{slug}", "UserController:getDataUser");
@@ -32,14 +32,21 @@ $route->get("/{slug}", "UserController:getDataUser");
 $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
 
     $route->get("/teste/in", "UserController:testeIn");
+
     $route->put("/perfil", "UserController:setDataUser");
+    $route->get("/perfil/tweet/{start}/{end}", "TweetController:getMyTweets");
 
     $route->get("/follow/{slug}", "UserController:followingUsers");
     $route->post("/follow/{id}", "UserController:followUser");
 
-
     $route->post("/tweet", "TweetController:setTweet");
+
+    $route->get("/tweet/my/{start}/{end}", "TweetController:getPersonalTweets");
+
     $route->delete("/tweet/{id}", "TweetController:deleteTweet");
+
+
+
     $route->post("/comment/{id}", "TweetController:setComment");
 });
 
