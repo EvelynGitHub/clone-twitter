@@ -86,7 +86,20 @@ class TweetController
         return Helper::jsonSend("É preciso estar logar para Tweetar!", HttpStatusCode::INTERNAL_SERVER_ERROR);
     }
 
-    public function deleteTweet(int $userId, int $tweetId)
+    public function deleteTweet(int $tweetId)
     {
+        $authenticatedUser = (new User())->findByIdAndToken($this->route->inApp->data->id, $this->route->inApp->data->token);
+
+        if ($authenticatedUser) {
+            $tweet = new Tweet();
+
+            $create = $tweet->destroyTweet($tweetId);
+
+            if ($create) return Helper::jsonSend("Tweet excluído com sucesso", HttpStatusCode::OK);
+
+            return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
+        }
+
+        return Helper::jsonSend("É preciso estar logar para apagar um Tweet!", HttpStatusCode::INTERNAL_SERVER_ERROR);
     }
 }

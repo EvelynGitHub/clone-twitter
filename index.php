@@ -39,6 +39,7 @@ $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
 
 
     $route->post("/tweet", "TweetController:setTweet");
+    $route->delete("/tweet/{id}", "TweetController:deleteTweet");
     $route->post("/comment/{id}", "TweetController:setComment");
 });
 

@@ -30,7 +30,7 @@ class Tweet extends Crud
 
     public function destroyTweet(int $id)
     {
-        $comments = $this->delete()->from("comments")->where("tweets_id = ?", [$id])->execute();
+        $comments = $this->delete()->from("comments")->where("tweet_id = ?", [$id])->execute();
 
         if ($comments) {
             $crud = $this->delete()->from("tweets")->where("id = ?", [$id])->execute();
