@@ -33,7 +33,7 @@ trait Helper
         ob_flush();
     }
 
-    public function isEmpty(array $keys, ?array $data)
+    public static function isEmpty(array $keys, ?array $data)
     {
         if (!Helper::isExists($keys, $data)) return true;
 

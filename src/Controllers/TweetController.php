@@ -51,8 +51,6 @@ class TweetController
     {
         $tweets = (new Tweet())->findAllTweet($feed, $userId, $start, $end);
 
-        // var_dump($tweets);
-
         return Helper::jsonSend("Tweets ", HttpStatusCode::ACCEPTED, null, $tweets);
     }
 
