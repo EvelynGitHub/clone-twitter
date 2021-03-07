@@ -48,7 +48,7 @@ trait Helper
         return false;
     }
 
-    function isExists(array $key, ?array $data)
+    static function isExists(array $key, ?array $data)
     {
         $notExist = array_diff($key, array_keys($data));
 
