@@ -82,6 +82,8 @@ class Tweet extends Crud
             $data[] = $crud[$i];
         }
 
+        var_dump($crud);
+        var_dump($this->getError());
 
         return $data;
     }
