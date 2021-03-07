@@ -51,7 +51,8 @@ class JWTWrapper
 
             if ($jwt) {
                 try {
-                    return $route->inApp = JWTWrapper::decode($jwt);
+                    $route->inApp = JWTWrapper::decode($jwt);
+                    return ["success" => true, "message" => "Acesso autorizado"];
                 } catch (Exception $ex) {
                     // nao foi possivel decodificar o token jwt
                     return ["error" => true, "message" => "Acesso nao autorizado"];
