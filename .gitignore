@@ -1,5 +1,7 @@
 /backend/vendor/
 /backend/env.php
 
+/frontend/node_modules
+
 /Dockerfile
 /docker-compose.yml
