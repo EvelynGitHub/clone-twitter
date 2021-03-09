@@ -59,20 +59,22 @@
     console.log(response);
 </script>
 
-<Menu />
-<Body>
-    <h1>Perfil</h1>
+<div class="body">
+    <Menu />
+    <Body>
+        <h1>Perfil</h1>
 
-    {#each response.data as tweet}
-        <Tweet {tweet} />
-    {:else}
-        <p>Nenhum Tweet Encontrado</p>
-    {/each}
+        {#each response.data as tweet}
+            <Tweet {tweet} />
+        {:else}
+            <p>Nenhum Tweet Encontrado</p>
+        {/each}
 
-    {#if response.data.length}
-        <p><a href="/#/">Ver mais Tweets</a></p>
-    {/if}
-</Body>
+        {#if response.data.length}
+            <p><a href="/#/">Ver mais Tweets</a></p>
+        {/if}
+    </Body>
+</div>
 
 <style>
     p,
