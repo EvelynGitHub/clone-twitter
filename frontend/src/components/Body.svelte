@@ -11,7 +11,9 @@
         flex-direction: column;
         align-items: center;
 
-        background-color: rgba(51, 51, 51, 0.219);
+        background-color: #fff;
+
+        /* background-color: rgba(51, 51, 51, 0.219); */
     }
 
     @media only screen and (max-width: 900px) {

@@ -17,7 +17,7 @@
         <ul class={toggle ? "menu" : "hide"}>
             <li><a href="/#/">Feed Global</a></li>
             <li><a href="/#/login">Feed Pessoal</a></li>
-            <li><a href="/#/">Perfil</a></li>
+            <li><a href="/#/perfil">Perfil</a></li>
             <li><a href="/#/login">Sair</a></li>
         </ul>
     </nav>
