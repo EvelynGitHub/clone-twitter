@@ -15,6 +15,9 @@
 
 <style>
 	:global(body) {
+		padding: 0;
+	}
+	:global(.body) {
 		display: grid;
 		grid-template-rows: 1fr;
 		grid-template-columns: 300px 1fr;
@@ -91,7 +94,7 @@
 	}
 
 	@media only screen and (max-width: 900px) {
-		:global(body) {
+		:global(.body) {
 			display: grid;
 			grid-template-rows: 3.5rem 1fr;
 			grid-template-columns: 1fr;
