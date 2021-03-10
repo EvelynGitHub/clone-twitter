@@ -1,6 +1,7 @@
 <script>
 	import Router, { link } from "svelte-spa-router";
 	import Home from "./pages/Home.svelte";
+	import MyFeed from "./pages/MyFeed.svelte";
 	import Perfil from "./pages/Perfil.svelte";
 	import Authentication from "./pages/Authentication.svelte";
 </script>
@@ -8,6 +9,7 @@
 <Router
 	routes={{
 		"/": Home,
+		"/my": MyFeed,
 		"/login": Authentication,
 		"/perfil": Perfil,
 	}}
@@ -26,6 +28,7 @@
 		padding: 0;
 
 		background: rgba(238, 238, 238, 0.5);
+		height: 100%;
 	}
 
 	:global(.mt) {

@@ -46,3 +46,23 @@ export const register = async (name, email, password, confirmpassword) => {
         return error;
     }
 }
+
+export const getTweetsMyFeed = async (start, end, token) => {
+    try {
+        const response = await SERVICES.get(`/tweet/my/${start}/${end}`, {}, token);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getMyTweets = async (start, end, token) => {
+    try {
+        const response = await SERVICES.get(`/perfil/tweet/${start}/${end}`, {}, token);
+        return response;
+    } catch (error) {
+        console.error(error);
+
+        return error;
+    }
+}

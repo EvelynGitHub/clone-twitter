@@ -10,7 +10,7 @@ const axiosAPI = axios.create({
 // implement a method to execute all the request from here.
 const apiRequest = (method, url, request, token) => {
     const headers = {
-        authorization: token
+        Authorization: `Bearer ${token}`
     };
     //using the axios instance to perform the request that received from each http method
     return axiosAPI({

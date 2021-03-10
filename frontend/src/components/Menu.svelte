@@ -20,7 +20,7 @@
         <ul class={toggle ? "menu" : "hide"}>
             {#if $user.token}
                 <li><a href="/#/">Feed Global</a></li>
-                <li><a href="/#/">Feed Pessoal</a></li>
+                <li><a href="/#/my">Feed Pessoal</a></li>
                 <li><a href="/#/perfil">Perfil</a></li>
                 <li><a on:click={logout} href="/#/login"> Sair </a></li>
             {:else}
