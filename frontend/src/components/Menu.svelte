@@ -1,7 +1,10 @@
 <script>
+    import { user } from "../api/Api";
+
     let toggle = false;
 
     const toggleMenu = () => (toggle = !toggle);
+    const logout = () => user.set({ token: false });
 </script>
 
 <header>
@@ -15,10 +18,15 @@
             {/if}
         </a>
         <ul class={toggle ? "menu" : "hide"}>
-            <li><a href="/#/">Feed Global</a></li>
-            <li><a href="/#/login">Feed Pessoal</a></li>
-            <li><a href="/#/perfil">Perfil</a></li>
-            <li><a href="/#/login">Sair</a></li>
+            {#if $user.token}
+                <li><a href="/#/">Feed Global</a></li>
+                <li><a href="/#/">Feed Pessoal</a></li>
+                <li><a href="/#/perfil">Perfil</a></li>
+                <li><a on:click={logout} href="/#/login"> Sair </a></li>
+            {:else}
+                <li><a href="/#/">Feed Global</a></li>
+                <li><a href="/#/login">Log In</a></li>
+            {/if}
         </ul>
     </nav>
 </header>

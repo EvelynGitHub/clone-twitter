@@ -4,7 +4,7 @@
     import Menu from "../components/Menu.svelte";
     import Body from "../components/Body.svelte";
     import Tweet from "../components/Tweet.svelte";
-    import { getTweets } from "../api/Api";
+    import { getTweets, user } from "../api/Api";
 
     let tweets = [];
     let moreTweets = true;
@@ -49,6 +49,17 @@
         {:else}
             <p>Nenhum tweet encontrado.</p>
         {/if}
+
+        <!-- 
+    {#await getTweets()}
+        <p>Buscando Tweets</p>
+    {:then tweets}
+        {#each tweets as tweet}
+            <Tweet {tweet} />
+        {/each}
+    {:catch erro}
+        <h2>{erro}</h2>
+    {/await} -->
     </Body>
 </div>
 
