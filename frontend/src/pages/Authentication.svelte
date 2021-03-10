@@ -1,4 +1,39 @@
 <script>
+    import { pop, replace } from "svelte-spa-router";
+
+    import { login, user } from "../api/Api";
+
+    if ($user.token) {
+        pop();
+    }
+
+    let messageLogin = "";
+    let messageRegister = "";
+
+    let loginUser = {
+        email: "",
+        password: "",
+    };
+
+    let registerUser = {
+        name: "",
+        email: "",
+        password: "",
+        confirmpassword: "",
+    };
+
+    const handlerLogin = async () => {
+        const res = await login(loginUser);
+
+        messageLogin = res.data.message;
+
+        if (res.token) {
+            messageLogin = res.message;
+            console.clear();
+            replace("/perfil");
+        }
+    };
+    const handlerRegister = () => {};
 </script>
 
 <main class="container">
@@ -6,15 +41,17 @@
         <p>Este é um clone do Twitter</p>
     </div>
     <div class="twitter-login">
-        <form action="#" method="post" id="login">
+        <form on:submit|preventDefault={handlerLogin} method="POST" id="login">
             <div>
                 <input
+                    bind:value={loginUser.email}
                     type="email"
                     class="input-login"
                     placeholder="E-MAIL"
                     name="email"
                 />
                 <input
+                    bind:value={loginUser.password}
                     type="password"
                     class="input-login"
                     placeholder="SENHA"
@@ -25,41 +62,45 @@
             </div>
             <input type="submit" value="ENTRAR" class="btn-login" />
 
-            <p class="message" />
+            <p class="message">{messageLogin}</p>
         </form>
 
         <form
-            action="<?= URL_BASE ?>/user/register"
-            method="post"
+            on:submit|preventDefault={handlerRegister}
+            method="POST"
             id="register"
         >
             <h2>CADASTRE-SE</h2>
             <input
+                bind:value={registerUser.name}
                 type="text"
                 class="input-login"
                 placeholder="NOME"
                 name="name"
             />
             <input
+                bind:value={registerUser.email}
                 type="email"
                 class="input-login"
                 placeholder="E-MAIL"
                 name="email"
             />
             <input
+                bind:value={registerUser.password}
                 type="password"
                 class="input-login"
                 placeholder="SENHA"
                 name="password"
             />
             <input
+                bind:value={registerUser.confirmpassword}
                 type="password"
                 class="input-login"
                 placeholder="CONFIRMAR SENHA"
                 name="confirmpassword"
             />
             <input type="submit" value="CADASTRAR" class="btn-login" />
-            <p class="message" />
+            <p class="message">{messageRegister}</p>
         </form>
     </div>
 </main>
@@ -119,11 +160,11 @@
         justify-content: space-between;
     }
 
-    .container .twitter-login #login {
+    /* .container .twitter-login #login {
         margin-top: 3rem;
         display: flex;
         justify-content: center;
-    }
+    } */
 
     .container .twitter-login div {
         text-align: right;
@@ -155,14 +196,14 @@
         background-color: #0284ca;
     }
 
-    .container .twitter-login #register {
+    /* .container .twitter-login #register {
         display: flex;
         flex-direction: column;
         align-items: center;
         margin-bottom: 10vh;
         width: 50%;
         align-self: center;
-    }
+    } */
 
     .container .twitter-login #register h2 {
         margin-bottom: 2rem;

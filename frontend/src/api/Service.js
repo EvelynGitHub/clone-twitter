@@ -17,29 +17,29 @@ const apiRequest = (method, url, request, token) => {
         method,
         url,
         data: request,
+        params: request,
         headers
     }).then(res => {
         return Promise.resolve(res.data);
-    })
-        .catch(err => {
-            return Promise.reject(err);
-        });
+    }).catch(err => {
+        return Promise.reject(err.response);
+    });
 };
 
 // function to execute the http get request
-const get = (url, request) => apiRequest("get", url, request);
+const get = (url, request, token = '') => apiRequest("get", url, request, token);
 
 // function to execute the http delete request
-const deleteRequest = (url, request) => apiRequest("delete", url, request);
+const deleteRequest = (url, request, token = '') => apiRequest("delete", url, request, token = '');
 
 // function to execute the http post request
-const post = (url, request) => apiRequest("post", url, request);
+const post = (url, request, token = '') => apiRequest("post", url, request, token = '');
 
 // function to execute the http put request
-const put = (url, request) => apiRequest("put", url, request);
+const put = (url, request, token = '') => apiRequest("put", url, request, token = '');
 
 // function to execute the http path request
-const patch = (url, request) => apiRequest("patch", url, request);
+const patch = (url, request, token = '') => apiRequest("patch", url, request, token = '');
 
 // expose your method to other services or actions
 const SERVICES = {

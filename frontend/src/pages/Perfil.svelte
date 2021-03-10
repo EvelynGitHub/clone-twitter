@@ -1,8 +1,14 @@
 <script>
+    import { push } from "svelte-spa-router";
     import Menu from "../components/Menu.svelte";
     import Body from "../components/Body.svelte";
     import Tweet from "../components/Tweet.svelte";
 
+    import { user } from "../api/Api";
+
+    if (!$user.token) {
+        push("/login");
+    }
     let json = `{
             "message": "Tweets ",
             "status": 202,

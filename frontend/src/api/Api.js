@@ -12,13 +12,20 @@ export const getTweets = async (start, end) => {
     }
 }
 
-export const login = async (email, password) => {
+export const login = async (login) => {
     try {
-        const response = await SERVICES.post(`/login`, { email, password });
+        const data = new FormData();
+        data.append('password', login.password);
+        data.append('email', login.email);
+
+        const response = await SERVICES.post(`/login`, data);
+
         user.set({ token: response.token })
+
         return response;
     } catch (error) {
-        console.error(error);
+
+        return error;
     }
 }
 

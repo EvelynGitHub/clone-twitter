@@ -49,17 +49,6 @@
         {:else}
             <p>Nenhum tweet encontrado.</p>
         {/if}
-
-        <!-- 
-    {#await getTweets()}
-        <p>Buscando Tweets</p>
-    {:then tweets}
-        {#each tweets as tweet}
-            <Tweet {tweet} />
-        {/each}
-    {:catch erro}
-        <h2>{erro}</h2>
-    {/await} -->
     </Body>
 </div>
 
