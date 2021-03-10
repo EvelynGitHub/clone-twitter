@@ -31,9 +31,18 @@ export const login = async (login) => {
 
 export const register = async (name, email, password, confirmpassword) => {
     try {
-        const response = await SERVICES.post(`/register`, { name, email, password, confirmpassword });
+        const data = new FormData();
+        data.append('password', password);
+        data.append('email', email);
+        data.append('name', name);
+        data.append('confirmpassword', confirmpassword);
+
+        const response = await SERVICES.post(`/register`, data);
+
+        user.set({ token: response.token })
         return response;
     } catch (error) {
-        console.error(error);
+
+        return error;
     }
 }

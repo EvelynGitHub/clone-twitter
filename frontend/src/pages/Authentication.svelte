@@ -1,7 +1,7 @@
 <script>
     import { pop, replace } from "svelte-spa-router";
 
-    import { login, user } from "../api/Api";
+    import { login, register, user } from "../api/Api";
 
     if ($user.token) {
         pop();
@@ -33,7 +33,22 @@
             replace("/perfil");
         }
     };
-    const handlerRegister = () => {};
+    const handlerRegister = async () => {
+        const res = await register(
+            registerUser.name,
+            registerUser.email,
+            registerUser.password,
+            registerUser.confirmpassword
+        );
+        console.log(res);
+        messageRegister = res.data.message;
+
+        if (res.token) {
+            messageRegister = res.message;
+            console.clear();
+            replace("/perfil");
+        }
+    };
 </script>
 
 <main class="container">
