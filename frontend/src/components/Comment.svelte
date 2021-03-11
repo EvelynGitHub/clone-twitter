@@ -1,5 +1,13 @@
 <script>
-    export let comments = {};
+    import { createEventDispatcher } from "svelte";
+
+    const dispatcher = createEventDispatcher();
+
+    const nextComments = () => {
+        dispatcher("nextComments");
+    };
+
+    export let comments = [{}];
 </script>
 
 {#each comments as comment}
@@ -15,17 +23,12 @@
     <p class="nota">Não há outros comentários.</p>
 {/each}
 
-{#if comments.length}
-    <p class="nota"><a href="/#/">Ver mais comentários</a></p>
-{/if}
-
 <style>
     a,
     p {
         margin: 0;
         padding: 0;
     }
-
     .nota {
         text-align: center;
         color: rgb(0, 100, 200);

@@ -6,9 +6,10 @@
 
     let comment = "";
     let message = "";
-    let limit = 2;
+    let limit = 10;
     let start = 0;
     let end = limit;
+    let moreComments = true;
 
     const addComment = async () => {
         console.log("Comentário");
@@ -21,13 +22,21 @@
             message = res.message;
             comment = "";
 
-            listComments();
+            const comments = await getComments(tweet.tweet_id, start, end);
+            tweet.comments = comments.data;
         }
     };
 
     const listComments = async () => {
+        start = end;
+        end = end + limit;
+
         const comments = await getComments(tweet.tweet_id, start, end);
-        // tweet.comments = comments.data;
+        if (comments.data.length > 0) {
+            tweet.comments = [...tweet.comments, ...comments.data];
+        } else {
+            moreComments = false;
+        }
 
         console.log(comments);
     };
@@ -44,12 +53,7 @@
             <form method="post" name="follow">
                 <!-- <input type="hidden" name="user_id" value={tweet.user_id} />
                 <input type="hidden" name="tweet_id" value={tweet.tweet_id} /> -->
-                <input
-                    on:click|preventDefault={listComments}
-                    type="submit"
-                    value="Seguir"
-                    class="btn btn-white"
-                />
+                <input type="submit" value="Seguir" class="btn btn-white" />
             </form>
         </div>
         <div class="tweet-body mt">
@@ -80,6 +84,14 @@
         <p><a href="/#/">Ver mais comentários</a></p> -->
 
         <Comment comments={tweet.comments} />
+
+        {#if moreComments && tweet.comments.length > 0}
+            <p class="nota">
+                <a on:click|preventDefault={listComments} href="/#/">
+                    Ver mais comentários
+                </a>
+            </p>
+        {/if}
     </div>
 </div>
 
@@ -88,7 +100,12 @@
         padding: 0;
         margin: 0;
     }
-
+    .nota {
+        text-align: center;
+        color: rgb(0, 100, 200);
+        padding: 0.5rem 0;
+        border-top: 1px solid #ccc;
+    }
     .feed-tweet {
         margin-bottom: 2rem;
         width: 90%;
