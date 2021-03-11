@@ -93,14 +93,9 @@ export const setComment = async (id, remark, token) => {
     }
 }
 
-export const getComment = async (id, start, end, token) => {
+export const getComments = async (id, start, end) => {
     try {
-        const data = new FormData();
-        data.append('tweet_id', id);
-        data.append('start', start);
-        data.append('end', end);
-
-        const response = await SERVICES.get(`/comment`, data, token);
+        const response = await SERVICES.get(`/comment/${id}/${start}/${end}`, {});
         return response;
     } catch (error) {
 

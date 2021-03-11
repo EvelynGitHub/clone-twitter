@@ -1,12 +1,35 @@
 <script>
     import Comment from "./Comment.svelte";
+    import { setComment, getComments, user } from "../api/Api";
 
     export let tweet = {};
 
     let comment = "";
+    let message = "";
+    let limit = 2;
+    let start = 0;
+    let end = limit;
 
-    const addComment = () => {
+    const addComment = async () => {
         console.log("Comentário");
+
+        const res = await setComment(tweet.tweet_id, comment, $user.token);
+
+        if (res.data.message) {
+            message = res.data.message;
+        } else {
+            message = res.message;
+            comment = "";
+
+            listComments();
+        }
+    };
+
+    const listComments = async () => {
+        const comments = await getComments(tweet.tweet_id, start, end);
+        // tweet.comments = comments.data;
+
+        console.log(comments);
     };
 </script>
 
@@ -21,33 +44,31 @@
             <form method="post" name="follow">
                 <!-- <input type="hidden" name="user_id" value={tweet.user_id} />
                 <input type="hidden" name="tweet_id" value={tweet.tweet_id} /> -->
-                <input type="submit" value="Seguir" class="btn btn-white" />
+                <input
+                    on:click|preventDefault={listComments}
+                    type="submit"
+                    value="Seguir"
+                    class="btn btn-white"
+                />
             </form>
         </div>
         <div class="tweet-body mt">
             {tweet.tweet_description}
         </div>
-        <div class="tweet-footer">
-            <form action="" method="post">
-                <!-- <input
-                    type="hidden"
-                    name="tweet_id"
-                    value="${tweet.tweet_id}"
-                />
-                <input
-                    type="hidden"
-                    name="tweet_token"
-                    value={tweet.tweet_id}
-                /> -->
-                <textarea bind:value={comment} name="comment_description" />
-                <input
-                    on:click|preventDefault={addComment}
-                    type="submit"
-                    value="Comentar"
-                    class="btn btn-blue"
-                />
-            </form>
-        </div>
+        {#if $user.token}
+            <div class="tweet-footer">
+                <form action="" method="post">
+                    <textarea bind:value={comment} name="comment_description" />
+                    <input
+                        on:click|preventDefault={addComment}
+                        type="submit"
+                        value="Comentar"
+                        class="btn btn-blue"
+                    />
+                </form>
+                <p>{message}</p>
+            </div>
+        {/if}
     </div>
     <div class="tweet-comment-area">
         <!-- Outro componente -->

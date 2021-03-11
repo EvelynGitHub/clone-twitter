@@ -75,9 +75,9 @@ class TweetController
         return Helper::jsonSend("Desculpe, tivemos um erro inesperado!", HttpStatusCode::INTERNAL_SERVER_ERROR);
     }
 
-    public function getComment(int $tweet_id, int $start, int $end)
+    public function getComment(int $id, int $start, int $end)
     {
-        $tweet = (new Tweet())->findAllComment($tweet_id, $start, $end);
+        $tweet = (new Tweet())->findAllComment($id, $start, $end);
 
         return Helper::jsonSend("Comentários", HttpStatusCode::OK, null, $tweet);
     }
