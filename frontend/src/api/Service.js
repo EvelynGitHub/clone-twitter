@@ -30,16 +30,16 @@ const apiRequest = (method, url, request, token) => {
 const get = (url, request, token = '') => apiRequest("get", url, request, token);
 
 // function to execute the http delete request
-const deleteRequest = (url, request, token = '') => apiRequest("delete", url, request, token = '');
+const deleteRequest = (url, request, token = '') => apiRequest("delete", url, request, token);
 
 // function to execute the http post request
-const post = (url, request, token = '') => apiRequest("post", url, request, token = '');
+const post = (url, request, token = '') => apiRequest("post", url, request, token);
 
 // function to execute the http put request
-const put = (url, request, token = '') => apiRequest("put", url, request, token = '');
+const put = (url, request, token = '') => apiRequest("put", url, request, token);
 
 // function to execute the http path request
-const patch = (url, request, token = '') => apiRequest("patch", url, request, token = '');
+const patch = (url, request, token = '') => apiRequest("patch", url, request, token);
 
 // expose your method to other services or actions
 const SERVICES = {

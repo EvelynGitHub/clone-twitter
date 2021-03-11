@@ -4,20 +4,36 @@
     import Menu from "../components/Menu.svelte";
     import Body from "../components/Body.svelte";
     import Tweet from "../components/Tweet.svelte";
-    import { getTweets, user } from "../api/Api";
+    import AddTweet from "../components/AddTweet.svelte";
+    import { getTweets } from "../api/Api";
 
     let tweets = [];
     let moreTweets = true;
+    let limit = 2;
     let start = 0;
-    let end = 2;
+    let end = limit;
 
     const nextTweets = async () => {
         start = end;
-        end = end + 2;
+        end = end + limit;
 
         const res = await getTweets(start, end);
         if (res.data.length) {
             tweets = [...tweets, ...res.data];
+        } else {
+            moreTweets = false;
+        }
+    };
+
+    const addTweet = async (e) => {
+        console.log(e.detail);
+
+        start = 0;
+        end = limit;
+
+        const res = await getTweets(start, end);
+        if (res.data.length) {
+            tweets = res.data;
         } else {
             moreTweets = false;
         }
@@ -37,6 +53,8 @@
     <Menu />
     <Body>
         <h1>Home</h1>
+
+        <AddTweet on:afterAdd={addTweet} />
 
         {#each tweets as tweet}
             <Tweet {tweet} />

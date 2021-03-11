@@ -66,3 +66,44 @@ export const getMyTweets = async (start, end, token) => {
         return error;
     }
 }
+
+export const setTweet = async (description, token) => {
+    try {
+        const data = new FormData();
+        data.append('description', description);
+
+        const response = await SERVICES.post(`/tweet`, data, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const setComment = async (id, remark, token) => {
+    try {
+        const data = new FormData();
+        data.append('remark', remark);
+
+        const response = await SERVICES.post(`/comment/${id}`, data, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const getComment = async (id, start, end, token) => {
+    try {
+        const data = new FormData();
+        data.append('tweet_id', id);
+        data.append('start', start);
+        data.append('end', end);
+
+        const response = await SERVICES.get(`/comment`, data, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}

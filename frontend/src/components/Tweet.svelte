@@ -3,21 +3,24 @@
 
     export let tweet = {};
 
-    let url = "";
-    let urlAction = "#";
+    let comment = "";
+
+    const addComment = () => {
+        console.log("Comentário");
+    };
 </script>
 
 <div class="feed-tweet">
     <div class="tweet-container">
         <div class="tweet-header">
             <p>
-                <a href="{url}/perfil/{tweet.user_id}">{tweet.user_name}</a>
+                <a href="/#/perfil/{tweet.user_id}">{tweet.user_name}</a>
                 <br />
                 Criado em {tweet.tweet_create_at}
             </p>
-            <form action={urlAction} method="post" name="follow">
-                <input type="hidden" name="user_id" value={tweet.user_id} />
-                <input type="hidden" name="tweet_id" value={tweet.tweet_id} />
+            <form method="post" name="follow">
+                <!-- <input type="hidden" name="user_id" value={tweet.user_id} />
+                <input type="hidden" name="tweet_id" value={tweet.tweet_id} /> -->
                 <input type="submit" value="Seguir" class="btn btn-white" />
             </form>
         </div>
@@ -26,7 +29,7 @@
         </div>
         <div class="tweet-footer">
             <form action="" method="post">
-                <input
+                <!-- <input
                     type="hidden"
                     name="tweet_id"
                     value="${tweet.tweet_id}"
@@ -35,9 +38,14 @@
                     type="hidden"
                     name="tweet_token"
                     value={tweet.tweet_id}
+                /> -->
+                <textarea bind:value={comment} name="comment_description" />
+                <input
+                    on:click|preventDefault={addComment}
+                    type="submit"
+                    value="Comentar"
+                    class="btn btn-blue"
                 />
-                <textarea name="comment_description" />
-                <input type="submit" value="Comentar" class="btn btn-blue" />
             </form>
         </div>
     </div>
@@ -102,12 +110,6 @@
         /* max-height: 300px;
     overflow: hidden;*/
     }
-    /* 
-    .feed-tweet .tweet-container .tweet-footer a,
-    .feed-tweet .tweet-container .tweet-footer p {
-        text-decoration: none;
-        text-align: center;
-    } */
 
     .feed-tweet .tweet-container .tweet-footer {
         border-top: 1px solid #ccc;
@@ -135,33 +137,5 @@
         outline: none;
 
         /* margin: 0.5rem; */
-    } /*  */
-    /* 
-    .feed-tweet .tweet-comment-area .tweet-comment {
-        margin: 1rem;
-        border: 1px solid #ccc;
-    } 
-
-    .feed-tweet .tweet-comment-area .tweet-comment a {
-        text-decoration: none;
-        color: black;
-        font-size: 1rem;
-        font-weight: 700;
-        padding-right: 2rem;
     }
-
-    .feed-tweet .tweet-comment-area .tweet-comment p:first-child {
-        color: #999;
-        font-size: 1rem;
-        font-weight: 500;
-        justify-content: space-between;
-        border-bottom: 1px solid #ccc;
-        padding: 0.5rem;
-    }
-
-    .feed-tweet .tweet-comment-area .tweet-comment p {
-        color: #222;
-        font-size: 1rem;
-        padding: 0.5rem;
-    } */
 </style>

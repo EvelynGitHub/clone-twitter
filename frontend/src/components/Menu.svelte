@@ -36,6 +36,7 @@
         position: relative;
         background-color: #039ff5;
         border-right: 1px solid #ccc;
+        z-index: 1;
     }
 
     .btn-toggle {
