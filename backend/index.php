@@ -25,7 +25,7 @@ $route->get("/", function ($data) {
 $route->post("/login", "UserController:loginUser");
 $route->post("/register", "UserController:registerUser");
 $route->get("/tweet/{start}/{end}", "TweetController:getGlobalTweets");
-$route->get("/comment", "TweetController:getComment");
+$route->get("/comment/{id}/{start}/{end}", "TweetController:getComment");
 
 $route->get("/{slug}", "UserController:getDataUser");
 
