@@ -46,7 +46,7 @@
     <div class="tweet-container">
         <div class="tweet-header">
             <p>
-                <a href="/#/perfil/{tweet.user_id}">{tweet.user_name}</a>
+                <a href="/#/perfil/{tweet.user_slug}">{tweet.user_name}</a>
                 <br />
                 Criado em {tweet.tweet_create_at}
             </p>

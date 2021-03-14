@@ -13,7 +13,7 @@
 {#each comments as comment}
     <div class="tweet-comment">
         <p>
-            <a href="/#/perfil/{comment.comment_user_id}">
+            <a href="/#/perfil/{comment.comment_user_slug}">
                 {comment.comment_user_name}
             </a>
         </p>
