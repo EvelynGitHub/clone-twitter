@@ -3,6 +3,7 @@
 	import Home from "./pages/Home.svelte";
 	import MyFeed from "./pages/MyFeed.svelte";
 	import Perfil from "./pages/Perfil.svelte";
+	import PerfilPublic from "./pages/Perfil-public.svelte";
 	import Authentication from "./pages/Authentication.svelte";
 </script>
 
@@ -12,6 +13,7 @@
 		"/my": MyFeed,
 		"/login": Authentication,
 		"/perfil": Perfil,
+		"/perfil/:name": PerfilPublic,
 	}}
 />
 
