@@ -88,7 +88,7 @@ class Tweet extends Crud
 
     public function findAllComment(int $tweetId, int $start = 0, int $end = 10)
     {
-        $crud = $this->select("DISTINCT
+        $crud = $this->select("
                     c.id as comment_id,
                     c.remark as comment_remark,
                     u.id as comment_user_id,
