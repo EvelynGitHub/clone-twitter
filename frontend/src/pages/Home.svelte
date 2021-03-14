@@ -9,13 +9,11 @@
 
     let tweets = [];
     let moreTweets = true;
-    let limit = 2;
     let start = 0;
-    let end = limit;
+    let end = 2;
 
     const nextTweets = async () => {
-        start = end;
-        end = end + limit;
+        start = start + end;
 
         const res = await getTweets(start, end);
         if (res.data.length) {
@@ -29,7 +27,6 @@
         console.log(e.detail);
 
         start = 0;
-        end = limit;
 
         const res = await getTweets(start, end);
         if (res.data.length) {
@@ -63,9 +60,9 @@
         {/each}
 
         {#if moreTweets}
-            <p on:click={nextTweets}>Ver mais Tweets</p>
+            <p class="info" on:click={nextTweets}>Ver mais Tweets</p>
         {:else}
-            <p>Nenhum tweet encontrado.</p>
+            <p class="info">Nenhum tweet encontrado.</p>
         {/if}
     </Body>
 </div>
