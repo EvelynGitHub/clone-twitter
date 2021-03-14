@@ -92,12 +92,13 @@ class Tweet extends Crud
                     c.id as comment_id,
                     c.remark as comment_remark,
                     u.id as comment_user_id,
-                    u.name as comment_user_name
+                    u.name as comment_user_name,
                     u.slug as comment_user_slug
                     ")
             ->from("users u
                     INNER JOIN comments c ON u.id = c.user_id")
             ->where("c.tweet_id = ?", [$tweetId])
+            ->order("c.create_at", "DESC")
             ->limit($end, $start)
             ->execute("fetchAll");
 
