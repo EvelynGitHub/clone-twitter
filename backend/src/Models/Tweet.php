@@ -47,6 +47,7 @@ class Tweet extends Crud
         $crud = $this->select("
                 u.id as user_id,
                 u.name as user_name,
+                u.slug as user_slug,
                 u.token as user_token,
                 t.id as tweet_id,
                 t.description as tweet_description,
@@ -92,6 +93,7 @@ class Tweet extends Crud
                     c.remark as comment_remark,
                     u.id as comment_user_id,
                     u.name as comment_user_name
+                    u.slug as comment_user_slug
                     ")
             ->from("users u
                     INNER JOIN comments c ON u.id = c.user_id")
