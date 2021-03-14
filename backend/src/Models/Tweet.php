@@ -44,7 +44,7 @@ class Tweet extends Crud
     {
         $data = [];
 
-        $crud = $this->select("
+        $crud = $this->select("DISTINCT
                 u.id as user_id,
                 u.name as user_name,
                 u.slug as user_slug,
@@ -88,7 +88,7 @@ class Tweet extends Crud
 
     public function findAllComment(int $tweetId, int $start = 0, int $end = 10)
     {
-        $crud = $this->select("
+        $crud = $this->select("DISTINCT
                     c.id as comment_id,
                     c.remark as comment_remark,
                     u.id as comment_user_id,
@@ -98,7 +98,7 @@ class Tweet extends Crud
             ->from("users u
                     INNER JOIN comments c ON u.id = c.user_id")
             ->where("c.tweet_id = ?", [$tweetId])
-            ->order("c.create_at", "DESC")
+            ->order("c.create_at", "ASC")
             ->limit($end, $start)
             ->execute("fetchAll");
 
