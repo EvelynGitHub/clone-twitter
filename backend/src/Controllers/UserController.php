@@ -188,7 +188,7 @@ class UserController
     {
         $user = new User();
 
-        if (!$user->deleteFollow($id, $this->route->inApp->data->id))
+        if (!$user->deleteFollow($this->route->inApp->data->id, $id))
             return Helper::jsonSend("Desculpe, tente de novo mais tarde!", HttpStatusCode::INTERNAL_SERVER_ERROR);
 
         return Helper::jsonSend("Agora você não segue mais essa pessoa!", HttpStatusCode::OK);

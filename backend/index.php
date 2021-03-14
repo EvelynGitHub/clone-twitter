@@ -42,6 +42,7 @@ $route->middleware("\\App\\Helpers\\JWTWrapper:auth", function () use ($route) {
 
     $route->get("/perfil/follow", "UserController:followingUsersAuth");
     $route->post("/follow/{id}", "UserController:followUser");
+    $route->delete("/follow/{id}", "UserController:unfollowUser");
 
     $route->post("/tweet", "TweetController:setTweet");
 
