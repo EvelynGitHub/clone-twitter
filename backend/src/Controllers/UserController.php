@@ -156,9 +156,7 @@ class UserController
         if (!empty($data["password"])) {
 
             $data["password"] = $user->generatePassword($data["password"]);
-        }
-
-        if (!isset($data["password"])) {
+        } else {
             $data["password"] = $authenticatedUser->password;
         }
 
