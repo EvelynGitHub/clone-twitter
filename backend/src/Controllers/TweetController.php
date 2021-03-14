@@ -47,6 +47,12 @@ class TweetController
         return $this->getAllTweets("global", 0, $start, $end);
     }
 
+    public function getTweetsUser(int $id, int $start = 0, int $end = 10)
+    {
+
+        return $this->getAllTweets("my", $id, $start, $end);
+    }
+
     private function getAllTweets(string $feed = "global", int $userId = 0, int $start = 0, int $end = 10)
     {
         $tweets = (new Tweet())->findAllTweet($feed, $userId, $start, $end);

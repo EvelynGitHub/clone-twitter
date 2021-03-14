@@ -112,6 +112,20 @@ class UserController
         return json_encode($result);
     }
 
+    public function getDataUserAuth()
+    {
+        $user = new User;
+
+        $result = $user->findById($this->route->inApp->data->id);
+
+        if (!$result)
+            return Helper::jsonSend("Dados de Usuário Logado não encontrado!", HttpStatusCode::NOT_ACCEPTABLE);
+
+        unset($result->password);
+
+        return json_encode($result);
+    }
+
     public function setDataUser(array $data)
     {
         $inputs = ["email", "name", "bio", "slug"];
@@ -206,5 +220,19 @@ class UserController
 
         // Se exitir trago os usuários que ele está seguindo
         return json_encode($user->findByFollow($userHasSlug->id));
+    }
+
+
+    public function followingUsersAuth()
+    {
+        $user = new User();
+
+        $userFollow = $user->findByFollow($this->route->inApp->data->id);
+
+        //Se não existir esse user
+        if (!$userFollow) return Helper::jsonSend("Você ainda não segue ninguém!", HttpStatusCode::NOT_ACCEPTABLE);
+
+        // Se exitir trago os usuários que ele está seguindo
+        return json_encode($userFollow);
     }
 }

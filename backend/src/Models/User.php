@@ -97,7 +97,7 @@ class User extends Crud
         return $user;
     }
 
-    public function findById(string $id)
+    public function findById(int $id)
     {
         $user = $this->select()
             ->from("users")
