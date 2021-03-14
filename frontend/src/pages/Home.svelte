@@ -5,7 +5,7 @@
     import Body from "../components/Body.svelte";
     import Tweet from "../components/Tweet.svelte";
     import AddTweet from "../components/AddTweet.svelte";
-    import { getTweets } from "../api/Api";
+    import { getAllTweets } from "../api/Api";
 
     let tweets = [];
     let moreTweets = true;
@@ -15,7 +15,7 @@
     const nextTweets = async () => {
         start = start + end;
 
-        const res = await getTweets(start, end);
+        const res = await getAllTweets(start, end);
         if (res.data.length) {
             tweets = [...tweets, ...res.data];
         } else {
@@ -28,7 +28,7 @@
 
         start = 0;
 
-        const res = await getTweets(start, end);
+        const res = await getAllTweets(start, end);
         if (res.data.length) {
             tweets = res.data;
         } else {
@@ -37,7 +37,7 @@
     };
 
     onMount(async () => {
-        const res = await getTweets(start, end);
+        const res = await getAllTweets(start, end);
         if (res.data.length) {
             tweets = res.data;
         } else {

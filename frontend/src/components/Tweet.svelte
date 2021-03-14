@@ -1,8 +1,17 @@
 <script>
     import Comment from "./Comment.svelte";
-    import { setComment, getComments, user } from "../api/Api";
+    import { onDestroy } from "svelte";
+    import { push } from "svelte-spa-router";
+    import {
+        setComment,
+        getComments,
+        setFollow,
+        deleteTweet,
+        user,
+    } from "../api/Api";
 
     export let tweet = {};
+    export let myPerfil = false;
 
     let comment = "";
     let message = "";
@@ -10,6 +19,7 @@
     let start = 0;
     let end = limit;
     let moreComments = true;
+    let visible = "";
 
     const addComment = async () => {
         console.log("Comentário");
@@ -40,6 +50,36 @@
 
         console.log(comments);
     };
+
+    const toFollowUser = async () => {
+        if (!$user.token) {
+            push("/login");
+            return;
+        }
+        visible = "hidden";
+        const res = await setFollow(tweet.user_id, $user.token);
+
+        if (res.data.message) {
+            message = res.data.message;
+        } else {
+            message = res.message;
+        }
+    };
+
+    const removeTweet = async () => {
+        if (!$user.token) {
+            push("/login");
+            return;
+        }
+
+        const res = await deleteTweet(tweet.tweet_id, $user.token);
+
+        if (res.data.message) {
+            alert(res.data.message);
+        } else {
+            alert(res.message);
+        }
+    };
 </script>
 
 <div class="feed-tweet">
@@ -50,11 +90,28 @@
                 <br />
                 Criado em {tweet.tweet_create_at}
             </p>
-            <form method="post" name="follow">
-                <!-- <input type="hidden" name="user_id" value={tweet.user_id} />
-                <input type="hidden" name="tweet_id" value={tweet.tweet_id} /> -->
-                <input type="submit" value="Seguir" class="btn btn-white" />
-            </form>
+            {#if myPerfil}
+                <form
+                    method="post"
+                    name="follow"
+                    on:submit|preventDefault={removeTweet}
+                >
+                    <input
+                        type="submit"
+                        value="Deletar"
+                        class="btn btn-white"
+                    />
+                </form>
+            {:else}
+                <form
+                    class={visible}
+                    method="post"
+                    name="follow"
+                    on:submit|preventDefault={toFollowUser}
+                >
+                    <input type="submit" value="Seguir" class="btn btn-white" />
+                </form>
+            {/if}
         </div>
         <div class="tweet-body mt">
             {tweet.tweet_description}
@@ -75,14 +132,6 @@
         {/if}
     </div>
     <div class="tweet-comment-area">
-        <!-- Outro componente -->
-        <!-- {#each tweet.comments as comment}
-            <Comment {comment} />
-        {:else}
-            <p class="nota">Não há mais comentários.</p>
-        {/each}
-        <p><a href="/#/">Ver mais comentários</a></p> -->
-
         <Comment comments={tweet.comments} />
 
         {#if moreComments && tweet.comments.length > 0}
@@ -99,6 +148,9 @@
     p {
         padding: 0;
         margin: 0;
+    }
+    .feed-tweet .hidden {
+        display: none;
     }
     .nota {
         text-align: center;

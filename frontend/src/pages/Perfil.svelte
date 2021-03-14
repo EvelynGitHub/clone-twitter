@@ -5,22 +5,36 @@
     import Body from "../components/Body.svelte";
     import Tweet from "../components/Tweet.svelte";
 
-    import { getMyTweets, user } from "../api/Api";
+    import {
+        getFollow,
+        getDataUser,
+        user,
+        getTweets,
+        update,
+        deleteUser,
+        deleteFollow,
+    } from "../api/Api";
 
     if (!$user.token) {
         push("/login");
     }
 
+    $: userData = {};
+    let userUpdate = { name: "", bio: "", slug: "", email: "", password: "" };
     let tweets = [];
+    let follows = [];
     let moreTweets = true;
     let start = 0;
     let end = 2;
+    $: edit = false;
+
+    let tweetsOrFollows = true;
 
     const nextTweets = async () => {
-        start = end;
-        end = end + 2;
+        start = start + 2;
 
-        const res = await getMyTweets(start, end, $user.token);
+        const res = await getTweets(start, end, $user.token);
+
         if (res.data.length) {
             tweets = [...tweets, ...res.data];
         } else {
@@ -28,16 +42,101 @@
         }
     };
 
-    onMount(async () => {
-        const res = await getMyTweets(start, end, $user.token);
+    const viewFollows = async () => {
+        tweetsOrFollows = false;
 
-        console.log(res);
+        const followsUser = await getFollow($user.token);
 
-        if (res.data.length) {
-            tweets = res.data;
+        console.log(followsUser);
+        if (followsUser.data) {
+            alert(followsUser.data.message);
         } else {
-            moreTweets = false;
+            follows = followsUser;
         }
+    };
+
+    const removeFollow = async (idFollow) => {
+        tweetsOrFollows = true;
+
+        console.log("ID:", idFollow);
+
+        const followsUser = await deleteFollow(idFollow, $user.token);
+
+        console.log(followsUser);
+        if (followsUser.data.message) {
+            alert(followsUser.data.message);
+        } else {
+            alert(followsUser.message);
+        }
+    };
+
+    const viewTweets = async () => {
+        tweetsOrFollows = true;
+    };
+
+    const viewOtherUser = async () => {
+        tweetsOrFollows = true;
+        follows = [];
+        tweets = [];
+
+        initPerfilUser();
+    };
+
+    const initPerfilUser = async () => {
+        const data = await getDataUser($user.token);
+        userData = data;
+
+        const tweetsUser = await getTweets(start, end, $user.token);
+
+        if (tweetsUser.error) {
+        } else {
+            tweets = tweetsUser.data;
+        }
+    };
+
+    const btnEditar = () => {
+        console.log("Editar");
+        userUpdate = userData;
+        edit = true;
+    };
+
+    const btnCancelar = () => {
+        console.log("Cancelar");
+        userUpdate = { name: "", bio: "", slug: "", email: "", password: "" };
+        edit = false;
+    };
+
+    const btnSalvar = async () => {
+        console.log("Salvar");
+
+        const res = await update(userUpdate, $user.token);
+
+        if (res.data.message) {
+            alert(res.data.message);
+        } else {
+            alert(res.message);
+        }
+
+        btnCancelar();
+    };
+
+    const btnDeletar = async () => {
+        console.log("Deletar");
+        let conf = confirm("Deseja realmente EXCLUIR sua conta?");
+
+        if (conf) {
+            const res = await deleteUser($user.token);
+
+            console.log(res);
+
+            alert("Até a próxima vez.");
+
+            push("/login");
+        }
+    };
+
+    onMount(async () => {
+        initPerfilUser();
     });
 </script>
 
@@ -62,22 +161,78 @@
                 </div>
             </div>
 
-            <div class="perfil-info">
-                <p class="info-name">Nome</p>
+            {#if edit}
+                <div class="perfil-info edit">
+                    <form on:submit|preventDefault={btnSalvar}>
+                        <label for="">Nome:</label>
+                        <input
+                            type="text"
+                            bind:value={userUpdate.name}
+                            placeholder="Seu nome"
+                        />
 
-                <p><span>E-mail: </span>email</p>
-                <p><span>Entrou em: </span>00/00</p>
-                <p><span>Bio: </span>asd</p>
-            </div>
+                        <label for="">Email:</label>
+                        <input
+                            type="text"
+                            bind:value={userUpdate.email}
+                            placeholder="Seu email"
+                        />
+                        <label for="">Nome de usuário:</label>
+                        <input
+                            type="text"
+                            bind:value={userUpdate.slug}
+                            placeholder="Seu nome de usuário"
+                        />
+                        <label for="">Bio:</label>
+                        <input
+                            type="text"
+                            bind:value={userUpdate.bio}
+                            placeholder="Breve biografia"
+                        />
+                        <label for="">Senha:</label>
+                        <input
+                            type="text"
+                            bind:value={userUpdate.password}
+                            placeholder="Nova senha?"
+                        />
+                        <br />
+                        <button type="submit" class="btn btn-white"
+                            >Salvar</button
+                        >
+                        <button on:click={btnCancelar} class="btn btn-blue"
+                            >Cancelar</button
+                        >
+                    </form>
+                </div>
+            {:else}
+                <div class="perfil-info">
+                    <p class="info-name">
+                        {userData.name}
+                        <button class="btn-edit" on:click={btnEditar}>
+                            Editar
+                        </button>
+                        <button class="btn-delete" on:click={btnDeletar}>
+                            Excluir Conta
+                        </button>
+                    </p>
+
+                    <p><span>E-mail: </span>{userData.email}</p>
+                    <p><span>Entrou em: </span>{userData.create_at}</p>
+                    <p><span>Bio: </span>{userData.bio}</p>
+                </div>
+            {/if}
+
             <hr />
             <div class="btn-perfil">
                 <input
+                    on:click={viewTweets}
                     type="button"
                     value="Tweets"
                     class="btn btn-blue btn-border-blue"
                     id="view-feed"
                 />
                 <input
+                    on:click={viewFollows}
                     type="button"
                     value="Follows"
                     class="btn btn-white btn-border-blue"
@@ -87,29 +242,66 @@
             <hr />
         </section>
 
-        <section id="feed">
-            {#each tweets as tweet}
-                <Tweet {tweet} />
-            {:else}
-                <p class="info">Nenhum tweet encontrado.</p>
-            {/each}
+        {#if tweetsOrFollows}
+            <section id="feed">
+                {#each tweets as tweet}
+                    <Tweet {tweet} myPerfil={true} />
+                {:else}
+                    <p class="info">Nenhum tweet encontrado.</p>
+                {/each}
 
-            {#if moreTweets}
-                <p class="info" on:click={nextTweets}>Ver mais Tweets</p>
-            {:else}
-                <p class="info">Nenhum tweet encontrado.</p>
-            {/if}
-        </section>
-        <section id="follows" hidden />
+                {#if moreTweets}
+                    <p class="info" on:click={nextTweets}>Ver mais Tweets</p>
+                {:else}
+                    <p class="info">Nenhum tweet encontrado.</p>
+                {/if}
+            </section>
+        {/if}
+        {#if !tweetsOrFollows}
+            <section id="follows">
+                {#each follows as follow}
+                    <div class="follow-item">
+                        <div>
+                            <p>
+                                <a
+                                    href="/#/perfil/{follow.slug}"
+                                    on:click={viewOtherUser}
+                                >
+                                    {follow.name}
+                                </a>
+                            </p>
+                            <span>Segue desde: {follow.create_at}</span>
+                        </div>
+
+                        <button
+                            on:click={removeFollow(follow.user_id)}
+                            class="div btn btn-white">Deixar de Seguir</button
+                        >
+                    </div>
+                {:else}
+                    <p class="info">Não encontrado.</p>
+                {/each}
+            </section>
+        {/if}
     </Body>
 </div>
 
 <style>
-    .info {
+    :global(.info) {
         width: 100%;
         text-align: center;
         padding: 1rem 0;
         background-color: #ddd;
+        cursor: pointer;
+    }
+
+    .div {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        border-radius: 3rem;
+        border: 2px solid #039ff5;
+        font-weight: 400;
     }
 
     #feed {
@@ -190,7 +382,7 @@
     #follows {
         width: 90%;
     }
-    /* 
+
     #follows .follow-item {
         width: 100%;
 
@@ -210,5 +402,42 @@
         font-weight: bold;
         font-style: normal;
         text-decoration: none;
-    } */
+        margin: 0.5rem 0;
+    } /* */
+
+    .edit {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+    .edit form {
+        display: flex;
+        flex-direction: column;
+        max-width: 450px;
+        width: 100%;
+        margin: 1rem auto;
+    }
+    .edit input {
+        max-width: 450px;
+        width: 100%;
+        border-radius: 5px;
+        margin-bottom: 0.5rem;
+    }
+
+    .btn-edit {
+        border: 2px solid #039ff5;
+        border-radius: 10px;
+        font-size: small;
+        color: #037cbd;
+        max-height: 1.5rem;
+        margin: 0.5rem 1rem;
+    }
+    .btn-delete {
+        border: 2px solid red;
+        border-radius: 10px;
+        font-size: small;
+        color: #b30303;
+        max-height: 1.5rem;
+        margin: 0.5rem 1rem;
+    }
 </style>

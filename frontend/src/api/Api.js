@@ -3,9 +3,18 @@ import { writable } from 'svelte/store'
 
 export const user = writable({ token: false })
 
-export const getTweets = async (start, end) => {
+export const getTweets = async (start, end, token) => {
     try {
-        const response = await SERVICES.get(`/tweet/${start}/${end}`);
+        const response = await SERVICES.get(`/perfil/tweet/${start}/${end}`, {}, token);
+        return response;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getAllTweets = async (start, end) => {
+    try {
+        const response = await SERVICES.get(`/tweet/${start}/${end}`, {});
         return response;
     } catch (error) {
         console.error(error);
@@ -47,6 +56,42 @@ export const register = async (name, email, password, confirmpassword) => {
     }
 }
 
+export const update = async (obj, token) => {
+    try {
+        // data.append('confirmpassword', obj.confirmpassword);
+
+        // let form = `name=\"${obj.name}\"&email=\"${obj.email}\"&bio=\"${obj.bio}\"&slug=\"${obj.slug}\"&password=\"${obj.password}\"`;
+        let form = `name=${obj.name}&email=${obj.email}&bio=${obj.bio}&slug=${obj.slug}&password=${obj.password}`;
+
+        const response = await SERVICES.put(`/perfil`, form, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const deleteUser = async (token) => {
+    try {
+        const response = await SERVICES.delete(`/perfil`, {}, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const getDataUser = async (token) => {
+    try {
+        const response = await SERVICES.get(`/perfil`, {}, token);
+        return response;
+    } catch (error) {
+        console.error(error);
+
+        return error;
+    }
+}
+
 export const getTweetsMyFeed = async (start, end, token) => {
     try {
         const response = await SERVICES.get(`/tweet/my/${start}/${end}`, {}, token);
@@ -80,6 +125,16 @@ export const setTweet = async (description, token) => {
     }
 }
 
+export const deleteTweet = async (id, token) => {
+    try {
+        const response = await SERVICES.delete(`/tweet/${id}`, {}, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
 export const setComment = async (id, remark, token) => {
     try {
         const data = new FormData();
@@ -93,9 +148,69 @@ export const setComment = async (id, remark, token) => {
     }
 }
 
+export const getFollow = async (token) => {
+    try {
+        const response = await SERVICES.get(`/perfil/follow`, {}, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const setFollow = async (id, token) => {
+    try {
+        const response = await SERVICES.post(`/follow/${id}`, {}, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const deleteFollow = async (id, token) => {
+    try {
+        const response = await SERVICES.delete(`/follow/${id}`, {}, token);
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
 export const getComments = async (id, start, end) => {
     try {
         const response = await SERVICES.get(`/comment/${id}/${start}/${end}`, {});
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const getDataUserPublic = async (name) => {
+    try {
+        const response = await SERVICES.get(`/perfil/${name}/data`, {});
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const getFollowUserPublic = async (name) => {
+    try {
+        const response = await SERVICES.get(`/perfil/${name}/follow`, {});
+        return response;
+    } catch (error) {
+
+        return error;
+    }
+}
+
+export const getTweetUserPublic = async (id, start = 0, end = 2) => {
+    try {
+        const response = await SERVICES.get(`/perfil/${id}/tweets/${start}/${end}`, {});
         return response;
     } catch (error) {
 
