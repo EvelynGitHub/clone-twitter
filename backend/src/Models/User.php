@@ -130,6 +130,19 @@ class User extends Crud
 
     public function deleteUser(int $id)
     {
+        $crud = $this
+            ->delete()
+            ->from('comments c
+                    USING tweets t')
+            ->where("c.tweet_id = t.id AND t.user_id = ?", [$id])->execute();
+
+        $crud = $this->delete()->from('comments')->where("user_id = ?", [$id])->execute();
+
+        $crud = $this->delete()->from('tweets')->where("user_id = ?", [$id])->execute();
+
+        $crud = $this->delete()->from('follows')
+            ->where("user_id = ? OR user_id_followers = ? ", [$id, $id])->execute();
+
         $crud = $this->delete()->from('users')->where("id = ?", [$id])->execute();
 
         return $crud;

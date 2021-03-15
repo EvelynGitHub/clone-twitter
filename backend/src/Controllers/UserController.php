@@ -202,7 +202,7 @@ class UserController
         if (!$user->deleteUser($this->route->inApp->data->id))
             return Helper::jsonSend("Desculpe, tente de novo mais tarde!", HttpStatusCode::INTERNAL_SERVER_ERROR);
 
-        return Helper::jsonSend("Agora você não segue mais essa pessoa!", HttpStatusCode::OK);
+        return Helper::jsonSend("Agora você não tem mais uma conta aqui!", HttpStatusCode::OK);
     }
 
     // Seguindo usuários
