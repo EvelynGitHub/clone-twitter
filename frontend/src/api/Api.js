@@ -58,10 +58,13 @@ export const register = async (name, email, password, confirmpassword) => {
 
 export const update = async (obj, token) => {
     try {
-        // data.append('confirmpassword', obj.confirmpassword);
+        let form = "";
 
-        // let form = `name=\"${obj.name}\"&email=\"${obj.email}\"&bio=\"${obj.bio}\"&slug=\"${obj.slug}\"&password=\"${obj.password}\"`;
-        let form = `name=${obj.name}&email=${obj.email}&bio=${obj.bio}&slug=${obj.slug}&password=${obj.password}`;
+        if (obj.password == "" || obj.password == null || obj.password == undefined) {
+            obj.password = "";
+        }
+
+        form = `name=${obj.name}&email=${obj.email}&bio=${obj.bio}&slug=${obj.slug}&password=${obj.password}`;
 
         const response = await SERVICES.put(`/perfil`, form, token);
         return response;

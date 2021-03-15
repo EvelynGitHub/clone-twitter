@@ -111,6 +111,8 @@
 
         const res = await update(userUpdate, $user.token);
 
+        console.log(res);
+
         if (res.data.message) {
             alert(res.data.message);
         } else {
@@ -128,6 +130,8 @@
             const res = await deleteUser($user.token);
 
             console.log(res);
+
+            user.set({ token: false });
 
             alert("Até a próxima vez.");
 
