@@ -3,8 +3,8 @@ import axios from "axios";
 
 // Create a instance of axios to use the same base url.
 const axiosAPI = axios.create({
-    baseURL: "http://localhost" //Não é o  recomendado, mas não sei porque
-    // baseURL: "https://evelyn-clone-twitter.herokuapp.com" //Não é o  recomendado, mas não sei porque
+    // baseURL: "http://localhost" //Não é o  recomendado, mas não sei porque
+    baseURL: "https://evelyn-clone-twitter.herokuapp.com" //Não é o  recomendado, mas não sei porque
 });
 
 // implement a method to execute all the request from here.

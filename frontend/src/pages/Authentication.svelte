@@ -57,25 +57,33 @@
     </div>
     <div class="twitter-login">
         <form on:submit|preventDefault={handlerLogin} method="POST" id="login">
-            <div>
+            <div class="row">
+                <div class="col">
+                    <div class="inputs">
+                        <input
+                            bind:value={loginUser.email}
+                            type="email"
+                            class="input-login"
+                            placeholder="E-MAIL"
+                            name="email"
+                        />
+                        <input
+                            bind:value={loginUser.password}
+                            type="password"
+                            class="input-login"
+                            placeholder="SENHA"
+                            name="password"
+                        />
+                    </div>
+                    <a href="/#/">Esqueceu sua senha?</a>
+                </div>
+
                 <input
-                    bind:value={loginUser.email}
-                    type="email"
-                    class="input-login"
-                    placeholder="E-MAIL"
-                    name="email"
+                    type="submit"
+                    value="ENTRAR"
+                    class="btn btn-blue btn-login"
                 />
-                <input
-                    bind:value={loginUser.password}
-                    type="password"
-                    class="input-login"
-                    placeholder="SENHA"
-                    name="password"
-                />
-                <br />
-                <a href="/#/">Esqueceu sua senha?</a>
             </div>
-            <input type="submit" value="ENTRAR" class="btn-login" />
 
             <p class="message">{messageLogin}</p>
         </form>
@@ -114,7 +122,11 @@
                 placeholder="CONFIRMAR SENHA"
                 name="confirmpassword"
             />
-            <input type="submit" value="CADASTRAR" class="btn-login" />
+            <input
+                type="submit"
+                value="CADASTRAR"
+                class="btn btn-blue btn-login"
+            />
             <p class="message">{messageRegister}</p>
         </form>
     </div>
@@ -122,34 +134,11 @@
 
 <style>
     .container {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
+        display: flex;
+        flex-direction: row;
 
-        height: 100vh;
-        /* overflow: hidden; */
-    }
-
-    .container input {
-        height: 45px;
-        margin-bottom: 5px;
-        float: left;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        outline: none;
-        padding: 0 0.8rem;
-        margin: auto 0.5rem;
-
-        font-size: 1rem;
-    }
-
-    .container input:focus {
-        border-radius: 8px;
-        border: 1px solid #039ff5;
-        outline: none;
-    }
-
-    .container #login .btn-login {
-        margin: 0 0.5rem;
+        width: 100%;
+        height: 100%;
     }
 
     .container .twitter {
@@ -167,149 +156,110 @@
         display: flex;
         justify-content: center;
         align-items: center;
+
+        width: 50%;
+        height: 100%;
+
+        flex: 1;
     }
 
     .container .twitter-login {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-    }
-
-    /* .container .twitter-login #login {
-        margin-top: 3rem;
-        display: flex;
-        justify-content: center;
-    } */
-
-    .container .twitter-login div {
-        text-align: right;
-    }
-
-    .container .twitter-login a {
-        align-self: flex-end;
-        text-decoration: none;
-        color: #999;
-    }
-
-    .btn-login {
-        height: 45px;
-        padding: 0 1rem;
-
-        border-style: none;
-        border-radius: 23px;
-
-        outline: none;
-
-        transition: 0.3s;
-
-        color: #fff;
-        background-color: #039ff5;
-        border: 2px solid #fff;
-    }
-
-    .btn-login:hover {
-        background-color: #0284ca;
-    }
-
-    /* .container .twitter-login #register {
+        max-width: 50%;
+        flex: 1;
         display: flex;
         flex-direction: column;
         align-items: center;
-        margin-bottom: 10vh;
-        width: 50%;
-        align-self: center;
-    } */
-
-    .container .twitter-login #register h2 {
-        margin-bottom: 2rem;
-        margin-top: 2rem;
-        color: #333;
+        padding: 0;
+        overflow-y: scroll;
     }
 
-    .container .twitter-login #register input[type="text"],
-    .container .twitter-login #register input[type="email"],
-    .container .twitter-login #register input[type="password"] {
-        margin-bottom: 1rem;
-        color: #333;
-        width: 100%;
+    .twitter-login #login {
+        margin-top: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
     }
 
-    .container .twitter-login #register input[type="submit"] {
-        justify-content: flex-start;
-        align-self: start;
-        margin-left: 0;
-        width: auto;
+    .twitter-login #login .row {
+        justify-content: space-around;
     }
 
-    @media only screen and (max-width: 1000px) {
-        .container {
-            grid-template-columns: 2fr 3fr;
-            overflow-x: auto;
-        }
+    .twitter-login #login a {
+        text-align: right;
+        justify-content: flex-end;
+    }
+    .twitter-login .btn-login {
+        border-radius: 10px;
+    }
 
-        .twitter-login #login,
-        .twitter-login #login div {
+    .twitter-login #register {
+        display: flex;
+        flex-direction: column;
+        padding: 1rem 5%;
+
+        width: min(500px, 90%);
+    }
+    .row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    .col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .container input {
+        height: 45px;
+        margin-bottom: 0.5rem;
+        float: left;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        outline: none;
+    }
+
+    @media only screen and (max-width: 1280px) {
+        .row {
             flex-direction: column;
             width: 100%;
-            margin: 0.5rem;
-        }
-
-        .container .twitter-login div a {
-            margin-right: 3rem;
-            display: inline-block;
-        }
-
-        .container .twitter-login input {
-            margin: 0.5rem auto;
-        }
-
-        .container input {
-            width: 90%;
-        }
-
-        .container .twitter-login #register {
-            margin: 0.5rem auto;
-            width: 90%;
         }
     }
 
-    @media only screen and (max-width: 750px) {
+    @media only screen and (max-width: 1070px) {
+        #login {
+            width: 90%;
+            padding: 1rem 5%;
+        }
+
+        .inputs {
+            width: 100%;
+
+            display: flex;
+            flex-direction: column;
+        }
+    }
+
+    @media only screen and (max-width: 600px) {
         .container {
-            grid-template-columns: 1fr;
-            grid-template-rows: 1fr 300px;
-            grid-template-areas:
-                "login"
-                "logo ";
-        }
-
-        /**/
-        .twitter-login {
-            grid-area: login;
-        }
-
-        .twitter {
-            grid-area: logo;
-        }
-
-        .twitter-login #login {
-            display: flex;
+            flex-direction: column-reverse;
+            width: 100vw;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            margin: 0 auto;
+            height: auto;
         }
 
-        .twitter-login #login div {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin: 0 auto;
+        .container .twitter {
             width: 100%;
-        }
 
-        .twitter-login #login div a {
-            display: inline-block;
-            margin-bottom: 1rem;
+            flex: 1;
+        }
+        .container .twitter-login {
+            width: 100%;
+            max-width: 100%;
+            padding: 0;
+            margin: 0;
+            flex: 1;
         }
     }
 </style>
