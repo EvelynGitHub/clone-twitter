@@ -2,8 +2,8 @@
 
 <center>
 
-![Imagem de capa](./frontend/public/img/twitter-logo.svg)
-![Imagem de capa](./frontend/public/img/twitter-logo-azul.svg)
+![Imagem de capa](https://github.com/EvelynGitHub/assets/blob/main/clone-twitter/clone-twitter.png)
+
 
 </center>
 <center>
